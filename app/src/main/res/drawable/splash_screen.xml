@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android">
+    <layer-list>
+        <item android:drawable="@drawable/splash_back" />
+        <item android:drawable="@drawable/splash_fore" android:gravity="center"/>
+    </layer-list>
+</inset>
