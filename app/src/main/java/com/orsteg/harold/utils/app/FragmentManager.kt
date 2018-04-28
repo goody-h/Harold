@@ -83,16 +83,12 @@ class FragmentManager(context: Context, private val parent: View, private var ta
                 null
             }
 
-            pFrag?.onHide(actionBtn)
-
             mCurrentGroup = position
 
 
             val frag = mGroups[mCurrentGroup].getFragment(reset)
 
             val new = mGroups[mCurrentGroup].newFrag
-
-            frag.onShow(actionBtn)
 
             if (frag.isHidden || new) {
 

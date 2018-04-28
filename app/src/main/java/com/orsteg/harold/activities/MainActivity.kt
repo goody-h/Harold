@@ -245,39 +245,35 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         mFragmentManager?.resetGroup(which)
     }
 
+    override fun hideActionBtn() {
+        actionBtn.visibility = View.GONE
+    }
+
+    override fun shoWActionBtn(listener: View.OnClickListener?) {
+        actionBtn.visibility = View.VISIBLE
+        actionBtn.setOnClickListener(listener)
+    }
+
+
     override fun setActionBtn(resId: Int, listener: (View) -> Unit) {
-        actionBtn?.setImageResource(resId)
-        actionBtn?.setOnClickListener(listener)
+        actionBtn.setImageResource(resId)
+        actionBtn.setOnClickListener(listener)
     }
 
-    override fun hideViews(hideIds: Array<Int>) {
-        for (id in hideIds){
-            when(id){
-                topTools.id -> topTools.visibility = View.GONE
-                R.id.bottom -> {
-                    bottom.visibility = View.GONE
-                    val frameParam = container.layoutParams as ViewGroup.MarginLayoutParams
+    override fun hideTabs() {
+        bottom.visibility = View.GONE
+        val frameParam = container.layoutParams as ViewGroup.MarginLayoutParams
 
-                    container.tag = frameParam.bottomMargin
+        container.tag = frameParam.bottomMargin
 
-                    frameParam.bottomMargin = 0
-                }
-            }
-        }
+        frameParam.bottomMargin = 0
     }
 
-    override fun showViews(showIds: Array<Int>) {
-        for (id in showIds){
-            when(id){
-                topTools.id -> topTools.visibility = View.VISIBLE
-                R.id.bottom -> {
-                    bottom.visibility = View.VISIBLE
-                    val frameParam = container.layoutParams as ViewGroup.MarginLayoutParams
+    override fun showTabs() {
+        bottom.visibility = View.VISIBLE
+        val frameParam = container.layoutParams as ViewGroup.MarginLayoutParams
 
-                    frameParam.bottomMargin = container.tag as Int
-                }
-            }
-        }
+        frameParam.bottomMargin = container.tag as Int
     }
 
     override fun showBottomSheet(menuId: Int, listener: (DialogInterface, Int) -> Unit) {

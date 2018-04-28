@@ -26,7 +26,6 @@ abstract class BaseFragment : Fragment() {
 
     protected var mListener: OnFragmentInteractionListener? = null
     protected var mPreferences: Preferences? = null
-    protected var pendingTransaction = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +50,7 @@ abstract class BaseFragment : Fragment() {
 
     abstract override fun onSaveInstanceState(outState: Bundle)
 
-    abstract fun onShow(actionBtn: View)
-
-    abstract fun onHide(actionBtn: View)
+    abstract override fun onHiddenChanged(hidden: Boolean)
 
     abstract fun onBackPressed(actionBtn: FloatingActionButton): Boolean
 
@@ -68,11 +65,15 @@ abstract class BaseFragment : Fragment() {
 
         fun resetGroup(which: Int)
 
+        fun hideActionBtn()
+
+        fun shoWActionBtn(listener: View.OnClickListener?)
+
         fun setActionBtn(resId: Int, listener: (View) -> Unit)
 
-        fun hideViews(hideIds: Array<Int>)
+        fun hideTabs()
 
-        fun showViews(showIds: Array<Int>)
+        fun showTabs()
 
         fun showBottomSheet(menuId: Int, listener: (DialogInterface, Int) -> Unit)
 

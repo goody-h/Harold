@@ -27,11 +27,8 @@ class OfflineFragment : BaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
     }
 
-    override fun onShow(actionBtn: View) {
-        actionBtn.visibility = View.GONE
-    }
-
-    override fun onHide(actionBtn: View) {
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (!hidden) mListener?.hideActionBtn()
     }
 
     override fun onBackPressed(actionBtn: FloatingActionButton): Boolean {
@@ -58,6 +55,9 @@ class OfflineFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        if (!isHidden) mListener?.hideActionBtn()
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_offline, container, false)
     }

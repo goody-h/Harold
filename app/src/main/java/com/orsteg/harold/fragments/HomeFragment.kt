@@ -21,6 +21,16 @@ import com.orsteg.harold.utils.app.Preferences
  * create an instance of this fragment.
  */
 class HomeFragment : BaseFragment() {
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (hidden){
+            mNav?.visibility = View.GONE
+
+        } else {
+            mNav?.visibility = View.VISIBLE
+
+            mListener?.hideActionBtn()
+        }
+    }
 
     override val mPrefType: String = Preferences.APP_PREFERENCES
 
@@ -36,9 +46,8 @@ class HomeFragment : BaseFragment() {
 
         mNav = mListener?.getTools(arrayOf(R.id.homeTool_inflater))?.get(0)?.inflate()
 
-        if (!pendingTransaction) mNav?.visibility = View.GONE
-
-        pendingTransaction = false
+        if (isHidden) mNav?.visibility = View.GONE
+        else mListener?.hideActionBtn()
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -55,20 +64,6 @@ class HomeFragment : BaseFragment() {
 
     }
 
-    override fun onShow(actionBtn: View) {
-        if (mNav != null){
-            mNav?.visibility = View.VISIBLE
-        } else {
-            pendingTransaction = true
-        }
-
-        actionBtn.visibility = View.GONE
-    }
-
-    override fun onHide(actionBtn: View) {
-
-        mNav?.visibility = View.GONE
-    }
 
     override fun onBackPressed(actionBtn: FloatingActionButton): Boolean {
 

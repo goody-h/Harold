@@ -21,19 +21,15 @@ import com.orsteg.harold.utils.app.Preferences
  * create an instance of this fragment.
  */
 class EventSetupFragment : BaseFragment() {
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (!hidden) mListener?.hideActionBtn()
+
+    }
 
 
     override val mPrefType: String = Preferences.EVENT_PREFERENCES
 
     override fun onSaveInstanceState(outState: Bundle) {
-    }
-
-    override fun onShow(actionBtn: View) {
-        actionBtn.visibility = View.GONE
-
-    }
-
-    override fun onHide(actionBtn: View) {
     }
 
     override fun onBackPressed(actionBtn: FloatingActionButton): Boolean {
@@ -60,6 +56,9 @@ class EventSetupFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+
+        if (!isHidden) mListener?.hideActionBtn()
+
         return inflater.inflate(R.layout.fragment_event_setup, container, false)
     }
 

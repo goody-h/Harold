@@ -22,28 +22,24 @@ import com.orsteg.harold.utils.app.Preferences
  * create an instance of this fragment.
  */
 class ResultFragment : BaseFragment() {
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (hidden) {
+            semDisplay?.visibility = View.GONE
+            semNav?.visibility = View.GONE
+
+        } else {
+
+            semDisplay?.visibility = View.VISIBLE
+            semNav?.visibility = View.VISIBLE
+
+            mListener?.shoWActionBtn(mAction)
+
+        }
+    }
 
     override val mPrefType: String = Preferences.RESULT_PREFERENCES
 
     override fun onSaveInstanceState(outState: Bundle) {
-    }
-
-    override fun onShow(actionBtn: View) {
-
-        if (semDisplay != null && semNav != null){
-            semDisplay?.visibility = View.VISIBLE
-            semNav?.visibility = View.VISIBLE
-        } else {
-            pendingTransaction = true
-        }
-        actionBtn.visibility = View.VISIBLE
-
-    }
-
-    override fun onHide(actionBtn: View) {
-        semDisplay?.visibility = View.GONE
-        semNav?.visibility = View.GONE
-
     }
 
     override fun onBackPressed(actionBtn: FloatingActionButton): Boolean {
@@ -81,12 +77,12 @@ class ResultFragment : BaseFragment() {
         semDisplay = views?.get(1)?.inflate()
         semNav = views?.get(0)?.inflate()
 
-        if (!pendingTransaction){
+        if (isHidden){
             semDisplay?.visibility = View.GONE
             semNav?.visibility = View.GONE
+        } else {
+            mListener?.shoWActionBtn(mAction)
         }
-
-        pendingTransaction = false
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_result, container, false)

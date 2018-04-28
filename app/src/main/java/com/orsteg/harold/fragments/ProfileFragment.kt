@@ -26,13 +26,10 @@ class ProfileFragment : BaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
     }
 
-    override fun onShow(actionBtn: View) {
-        actionBtn.visibility = View.GONE
-    }
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (!hidden) mListener?.hideActionBtn()
 
-    override fun onHide(actionBtn: View) {
     }
-
     override fun onBackPressed(actionBtn: FloatingActionButton): Boolean {
 
         return true
@@ -57,6 +54,9 @@ class ProfileFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        if (!isHidden) mListener?.hideActionBtn()
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }

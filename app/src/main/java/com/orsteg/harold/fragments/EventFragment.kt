@@ -21,24 +21,19 @@ import com.orsteg.harold.utils.app.Preferences
  * create an instance of this fragment.
  */
 class EventFragment : BaseFragment() {
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (hidden){
+            eventSet?.visibility = View.GONE
+        } else {
+            eventSet?.visibility = View.VISIBLE
+
+            mListener?.shoWActionBtn(mAction)
+        }
+    }
 
     override val mPrefType: String = Preferences.EVENT_PREFERENCES
 
     override fun onSaveInstanceState(outState: Bundle) {
-    }
-
-    override fun onShow(actionBtn: View) {
-        if (eventSet != null){
-            eventSet?.visibility = View.VISIBLE
-        } else {
-            pendingTransaction = true
-        }
-
-        actionBtn.visibility = View.VISIBLE
-    }
-
-    override fun onHide(actionBtn: View) {
-        eventSet?.visibility = View.GONE
     }
 
     override fun onBackPressed(actionBtn: FloatingActionButton): Boolean {
@@ -72,9 +67,11 @@ class EventFragment : BaseFragment() {
 
         eventSet = mListener?.getTools(arrayOf(R.id.homeTool_inflater))?.get(0)?.inflate()
 
-        if (!pendingTransaction) eventSet?.visibility = View.GONE
-
-        pendingTransaction = false
+        if (isHidden) {
+            eventSet?.visibility = View.GONE
+        } else {
+            mListener?.shoWActionBtn(mAction)
+        }
 
         return inflater.inflate(R.layout.fragment_event, container, false)
     }
@@ -85,7 +82,6 @@ class EventFragment : BaseFragment() {
 
 
     }
-
 
 
     companion object {
