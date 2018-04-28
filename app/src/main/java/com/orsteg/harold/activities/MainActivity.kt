@@ -321,7 +321,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
 
             val stateNormalBitmap = Bitmap.createBitmap(
-                    stateNormal.intrinsicWidth,
+                    stateNormal!!.intrinsicWidth,
                     stateNormal.intrinsicHeight, Bitmap.Config.ARGB_8888)
             val canvas1 = Canvas(stateNormalBitmap)
             stateNormal.setBounds(0, 0, canvas1.width, canvas1.height)

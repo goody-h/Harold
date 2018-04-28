@@ -25,7 +25,7 @@ class ResultFragment : BaseFragment() {
 
     override val mPrefType: String = Preferences.RESULT_PREFERENCES
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
     }
 
     override fun onShow(actionBtn: View) {
@@ -68,12 +68,12 @@ class ResultFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            mParam1 = arguments.getString(ARG_PARAM1)
-            mParam2 = arguments.getString(ARG_PARAM2)
+            mParam1 = arguments!!.getString(ARG_PARAM1)
+            mParam2 = arguments!!.getString(ARG_PARAM2)
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         val views = mListener?.getTools(arrayOf(R.id.resultTopTool_inflater, R.id.resultTool_inflater))
@@ -89,10 +89,10 @@ class ResultFragment : BaseFragment() {
         pendingTransaction = false
 
         // Inflate the layout for this fragment
-        return inflater!!.inflate(R.layout.fragment_result, container, false)
+        return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 

@@ -24,7 +24,7 @@ class EventFragment : BaseFragment() {
 
     override val mPrefType: String = Preferences.EVENT_PREFERENCES
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
     }
 
     override fun onShow(actionBtn: View) {
@@ -61,12 +61,12 @@ class EventFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            mParam1 = arguments.getString(ARG_PARAM1)
-            mParam2 = arguments.getString(ARG_PARAM2)
+            mParam1 = arguments!!.getString(ARG_PARAM1)
+            mParam2 = arguments!!.getString(ARG_PARAM2)
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
@@ -76,11 +76,11 @@ class EventFragment : BaseFragment() {
 
         pendingTransaction = false
 
-        return inflater!!.inflate(R.layout.fragment_event, container, false)
+        return inflater.inflate(R.layout.fragment_event, container, false)
     }
 
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 

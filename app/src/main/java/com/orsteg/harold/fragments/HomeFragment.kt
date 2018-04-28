@@ -31,7 +31,7 @@ class HomeFragment : BaseFragment() {
     }
 
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         mNav = mListener?.getTools(arrayOf(R.id.homeTool_inflater))?.get(0)?.inflate()
@@ -41,17 +41,17 @@ class HomeFragment : BaseFragment() {
         pendingTransaction = false
 
         // Inflate the layout for this fragment
-        return inflater!!.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 
     }
 
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
 
     }
 

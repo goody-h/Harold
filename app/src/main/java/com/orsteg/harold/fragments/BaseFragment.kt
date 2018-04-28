@@ -30,7 +30,7 @@ abstract class BaseFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mPreferences = Preferences(context, mPrefType)
+        mPreferences = Preferences(context!!, mPrefType)
     }
 
     override fun onAttach(context: Context?) {
@@ -49,7 +49,7 @@ abstract class BaseFragment : Fragment() {
 
     abstract val mPrefType: String
 
-    abstract override fun onSaveInstanceState(outState: Bundle?)
+    abstract override fun onSaveInstanceState(outState: Bundle)
 
     abstract fun onShow(actionBtn: View)
 
