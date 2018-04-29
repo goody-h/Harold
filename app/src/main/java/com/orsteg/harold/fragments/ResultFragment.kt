@@ -180,7 +180,7 @@ class ResultFragment : BaseFragment() {
         bottomBtn!!.setOnClickListener {
             mListener?.showBottomSheet(R.menu.result_options) { _, which ->
                 when (which) {
-                    R.id.save1 -> Thread { ResultEditor(context!!).saveResultState() }.run()
+                    R.id.save1 -> Thread { ResultEditor(context!!).saveResultState() }.start()
                     R.id.refresh -> resetResultState()
                     R.id.upload -> {
                         reset = true

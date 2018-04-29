@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
 import com.orsteg.harold.fragments.*
+import com.orsteg.harold.utils.event.NotificationScheduler
 import com.orsteg.harold.utils.user.AppUser
 
 /**
@@ -225,6 +226,14 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
         private var pref = Preferences(context, Preferences.EVENT_PREFERENCES)
 
+        init {
+            val setup = pref.mPrefs.getBoolean("harold.event.setup", false)
+
+            if (setup){
+                Thread { NotificationScheduler.setAllReminders(context)}.start()
+            }
+        }
+
         override fun getFragment(reset: Boolean): BaseFragment {
 
             val setup = pref.mPrefs.getBoolean("harold.event.setup", false)
@@ -235,7 +244,7 @@ class FragmentManager(context: Context, private val parent: View, private var ta
                 fragTag = tags[0]
                 var mFrag = mFragmentManager.findFragmentByTag(fragTag)
                 if (mFrag == null) {
-                    mFrag = EventFragment.newInstance("", "")
+                    mFrag = EventFragment.newInstance(0, "")
                     newFrag = true
                 } else {
                     newFrag = false

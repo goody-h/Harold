@@ -2,10 +2,14 @@ package com.orsteg.harold.utils.event
 
 import android.content.Context
 import android.os.Bundle
+import com.alamkanak.weekview.WeekViewEvent
+import com.alamkanak.weekview.WeekViewUtil
+import com.orsteg.harold.R
 import com.orsteg.harold.database.EventDatabase
 import com.orsteg.harold.database.ResultDataBase
 import com.orsteg.harold.utils.app.Preferences
 import com.orsteg.harold.utils.app.TimeConstants
+import java.util.*
 
 /**
  * Created by goodhope on 4/16/18.
@@ -96,26 +100,26 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
         return b
     }
 
-    /*
+
     fun getWeekViewEvent(): WeekViewEvent {
-        val startTime = WeekViewUtil.today()
+        val start = WeekViewUtil.today()
 
-        val startArr = getHandM(start)
-        startTime.set(Calendar.DAY_OF_WEEK, dayIndex)
-        startTime.set(Calendar.HOUR_OF_DAY, startArr[0])
-        startTime.set(Calendar.MINUTE, startArr[1])
+        val startArr = getHandM(startTime)
+        start.set(Calendar.DAY_OF_WEEK, dayIndex)
+        start.set(Calendar.HOUR_OF_DAY, startArr[0])
+        start.set(Calendar.MINUTE, startArr[1])
 
-        val endArr = getHandM(end)
-        val endTime = startTime.clone() as Calendar
+        val endArr = getHandM(endTime)
+        val endTime = start.clone() as Calendar
         endTime.set(Calendar.HOUR_OF_DAY, endArr[0])
         endTime.set(Calendar.MINUTE, endArr[1])
 
-        val event = WeekViewEvent(notificationId.toLong(), code + " " + title, venue, startTime, endTime)
+        val event = WeekViewEvent(notificationId.toLong(), "$cCode $cTitle", venue, start, endTime)
         event.color = context.resources.getColor(R.color.event_color_01)
 
         return event
     }
-    */
+
 
 
     private fun getHandM(time: Int)
