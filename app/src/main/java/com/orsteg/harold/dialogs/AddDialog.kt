@@ -14,20 +14,21 @@ import com.orsteg.harold.utils.result.Course
 import com.orsteg.harold.utils.result.Semester
 import kotlinx.android.synthetic.main.set_course_dialog_layout.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by goodhope on 4/28/18.
  */
 class AddDialog(context: Context, private var id: Int, private val staticId: Boolean,
                 private val new: Boolean, private val course: Course? = null,
-                private val onSuccess: () -> Unit ) : Dialog(context) {
+                private val onSuccess: (Int, Int) -> Unit ) : Dialog(context) {
 
     private var ss = ""
 
     private val TAG = "mytest"
 
 
-    override fun onCreate(savedInstanceState: Bundle) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.set_course_dialog_layout)
@@ -39,9 +40,11 @@ class AddDialog(context: Context, private var id: Int, private val staticId: Boo
         val semN = (id % 1000) / 100 - 1
 
         if (!staticId) {
-            val lel = Arrays.asList(context.resources.getStringArray(R.array.levels))
-            val sem = Arrays.asList(context.resources.getStringArray(R.array.semes))
+            val l = context.resources.getStringArray(R.array.levels)
+            val lel = (0 until l.size ) .mapTo(ArrayList<String>()) { l[it] }
 
+            val s = context.resources.getStringArray(R.array.semes)
+            val sem = (0 until s.size ) .mapTo(ArrayList<String>()) { s[it] }
 
             levels.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, lel)
             levels.setSelection(lelN.toInt())
@@ -168,13 +171,13 @@ class AddDialog(context: Context, private var id: Int, private val staticId: Boo
             add.setOnClickListener({
                 createNew()
                 dismiss()
-                onSuccess()
+                onSuccess(id, cu.text.toString().toInt())
             })
         } else {
             add.setOnClickListener({
                 update()
                 dismiss()
-                onSuccess()
+                onSuccess(id, cu.text.toString().toInt())
             })
         }
 

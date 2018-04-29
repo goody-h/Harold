@@ -13,7 +13,7 @@ import com.orsteg.harold.utils.result.Semester
 class ResultDataBase(private val context: Context, private val semId: Int) : SQLiteOpenHelper(context,
         "harold.result.database", null, 1) {
 
-    private val semester = Semester.semName(semId)
+    private val semester = Semester.semName(semId).replace(".", "_")
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("CREATE TABLE $semester (ID INTEGER PRIMARY KEY AUTOINCREMENT, " +

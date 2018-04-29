@@ -17,7 +17,7 @@ class ListDialog(context: Context, private val headerTxt: String, private val li
                  private val onItemClick: (AdapterView<*>, Int) -> Unit) : Dialog(context) {
 
 
-    override fun onCreate(savedInstanceState: Bundle) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)

@@ -3,6 +3,7 @@ package com.orsteg.harold.utils.result
 import android.content.Context
 import com.orsteg.harold.database.ResultDataBase
 import com.orsteg.harold.utils.app.Preferences
+import java.util.ArrayList
 
 /**
  * Created by goodhope on 4/15/18.
@@ -153,6 +154,12 @@ object Semester{
 
         return pref.mPrefs.getInt(CURRENT, 0)
     }
+
+}
+
+class Level(var Level_Id: Int) {
+    var sems: ArrayList<Int> = ArrayList()
+    var semn: ArrayList<String> = ArrayList()
 
 }
 

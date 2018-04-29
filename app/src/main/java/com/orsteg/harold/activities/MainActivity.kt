@@ -16,11 +16,13 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.view.*
 import android.widget.ImageView
+import com.cocosw.bottomsheet.BottomSheet
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.orsteg.harold.R
+import com.orsteg.harold.dialogs.WarningDialog
 import com.orsteg.harold.fragments.BaseFragment
 import com.orsteg.harold.utils.app.FragmentManager
 import com.orsteg.harold.utils.app.Preferences
@@ -47,6 +49,9 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
             R.drawable.ic_school_black_24dp,
             R.drawable.ic_date_range_black_24dp,
             R.drawable.ic_person_black_24dp)
+
+
+    private var sheet: BottomSheet? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -237,8 +242,9 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
     }
 
-    override fun onCreateDialog(id: Int): Dialog {
-        return super.onCreateDialog(id)
+    override fun onCreateDialog(id: Int): Dialog? {
+
+        return sheet
     }
 
     override fun resetGroup(which: Int) {
@@ -255,7 +261,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     }
 
 
-    override fun setActionBtn(resId: Int, listener: (View) -> Unit) {
+    override fun setActionBtn(resId: Int, listener: View.OnClickListener?) {
         actionBtn.setImageResource(resId)
         actionBtn.setOnClickListener(listener)
     }
@@ -277,7 +283,8 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     }
 
     override fun showBottomSheet(menuId: Int, listener: (DialogInterface, Int) -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        sheet = BottomSheet.Builder(this).sheet(menuId).listener(listener).grid().build()
+        showDialog(menuId)
     }
 
     override fun showSnackBar(message: String, action: String, listener: (View) -> Unit) {
@@ -288,7 +295,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     }
 
     override fun showWarning(message: String, action: () -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        WarningDialog(this, message, action).show()
     }
 
     override fun showLoader(message: String, cancelable: Boolean): Dialog {

@@ -17,16 +17,20 @@ import kotlin.collections.ArrayList
  */
 class ResultEditor(private val context: Context) {
 
-    fun addTemplate(stream: InputStream, reset: Boolean) {
+    fun addTemplate(stream: InputStream, reset: Boolean, saveState: Boolean = true): Boolean {
 
         val handler = FileHandler()
         val obj = handler.validateFile(stream)
 
-        if (obj.optBoolean("validity", false)){
-            setToResult(obj.optJSONArray("courses"), reset)
+        return if (obj.optBoolean("validity", false)){
+            setToResult(obj.optJSONArray("courses"), reset, saveState)
+
+            true
         } else {
             // get error message
             obj.optString("message", "Read error")
+
+            false
         }
 
     }
@@ -61,9 +65,9 @@ class ResultEditor(private val context: Context) {
     }
 
 
-    private fun setToResult(obj: JSONArray, reset: Boolean) {
+    private fun setToResult(obj: JSONArray, reset: Boolean, saveState: Boolean) {
 
-        saveResultState()
+        if (saveState) saveResultState()
 
         if (reset) clearResult()
 
@@ -95,7 +99,7 @@ class ResultEditor(private val context: Context) {
                                 , it.getInt("unit"), it.optString("grade", ""))
                     }
 
-            Preferences(context, Preferences.RESULT_PREFERENCES).commit()
+            Preferences(context, Preferences.RESULT_PREFERENCES).mEditor.putBoolean("result.changed", false).commit()
         } catch (e: JSONException){
 
         }
@@ -107,6 +111,9 @@ class ResultEditor(private val context: Context) {
         for (day in TimeConstants.DAYS) {
 
             val helper = EventDatabase(context, day)
+
+            if (Event.eventCount(context, day) == 0) helper.onUpgrade(helper.writableDatabase, 1, 1)
+
             val res = helper.getAllData()
 
             while (res.moveToNext()) {
@@ -127,7 +134,7 @@ class ResultEditor(private val context: Context) {
 
         val sem = Semester.getCurrentSemester(context)
         val l = result.mPrefs.getString("result.level.current.text", "LEVEL")
-        val s = result.mPrefs.getString("result.semester.current.text", "Semester")
+        val s = result.mPrefs.getString("result.semester.current.text", "SEM")
 
         result.mEditor.putString("result.level.previous.text", l)
                 .putInt("result.semester.previous", sem)

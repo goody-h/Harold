@@ -203,6 +203,7 @@ class FileHandler {
         var semId = 1100
         while (semId < 9400) {
             val helper = ResultDataBase(context, semId)
+            if (Semester.courseCount(context, semId) == 0) helper.onUpgrade(helper.writableDatabase, 1, 1)
             val res = helper.getAllData()
 
 
