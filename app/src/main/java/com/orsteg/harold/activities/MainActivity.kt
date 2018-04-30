@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.orsteg.harold.R
 import com.orsteg.harold.dialogs.WarningDialog
 import com.orsteg.harold.fragments.BaseFragment
@@ -60,6 +61,8 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         setContentView(R.layout.activity_main)
 
         val prefs = Preferences(this)
+        FirebaseRemoteConfig.getInstance().setDefaults(R.xml.remote_config_defaults)
+
 
         mUser = AppUser.getPersistentUser(this)
         authState = prefs.mPrefs.getBoolean("user.hasState", false)

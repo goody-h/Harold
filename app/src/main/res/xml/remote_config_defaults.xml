@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- START xml_defaults -->
+<defaultsMap>
+    <entry>
+        <key>contact_info</key>
+        <value>Email: orsteg.apps@gmail.com||Github: github.com/goody-h/harold</value>
+    </entry>
+    <entry>
+        <key>Home_Page</key>
+        <value>http://www.soundsenseitv.com</value>
+    </entry>
+    <entry>
+        <key>Home_Filter</key>
+        <value>soundsenseitv.com</value>
+    </entry>
+    <entry>
+        <key>Home_Display_Name</key>
+        <value>SoundSenseiTv</value>
+    </entry>
+    <entry>
+        <key>Home_Copyright_Owner</key>
+        <value>Oyas Inc</value>
+    </entry>
+    <entry>
+        <key>Home_Download_Filters</key>
+        <value>/download/</value>
+    </entry>
+    <entry>
+        <key>Update_Version</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>Update_Result</key>
+        <value>ok</value>
+    </entry>
+    <entry>
+        <key>Update_Event</key>
+        <value>ok</value>
+    </entry>
+    <entry>
+        <key>Update_Forum</key>
+        <value>ok</value>
+    </entry>
+    <entry>
+        <key>Update_Home</key>
+        <value>ok</value>
+    </entry>
+    <entry>
+        <key>Update_Profile</key>
+        <value>ok</value>
+    </entry>
+</defaultsMap>
+    <!-- END xml_defaults -->
