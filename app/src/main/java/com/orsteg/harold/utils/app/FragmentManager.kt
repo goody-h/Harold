@@ -158,10 +158,6 @@ class FragmentManager(context: Context, private val parent: View, private var ta
         }
     }
 
-    companion object {
-        val TAG = "THISTAG"
-    }
-
     interface OnFragmentManagerListener {
 
         var mUser: AppUser?

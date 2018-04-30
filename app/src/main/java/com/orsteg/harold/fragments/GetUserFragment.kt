@@ -2,16 +2,15 @@ package com.orsteg.harold.fragments
 
 
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 
 import com.orsteg.harold.R
 import com.orsteg.harold.utils.app.Preferences
+import com.orsteg.harold.utils.user.AppUser
 
 
 /**
@@ -59,6 +58,13 @@ class GetUserFragment : BaseFragment() {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_get_user, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        view.findViewById<View>(R.id.cancel).setOnClickListener { AppUser.signOut(context!!) }
+
     }
 
     companion object {

@@ -38,8 +38,6 @@ class HomeFragment : BaseFragment() {
     private var displayname: String? = null
     private var downloadFilters: String? = null
 
-    private var mFirebaseRemoteConfig: FirebaseRemoteConfig? = null
-
     private var prog: View? = null
 
     var pageError = ""
@@ -85,17 +83,17 @@ class HomeFragment : BaseFragment() {
 
         prog = view.findViewById(R.id.prog)
 
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        val mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 
-        link = mFirebaseRemoteConfig!!.getString("Home_Page")
+        link = mFirebaseRemoteConfig.getString("Home_Page")
 
-        filter = mFirebaseRemoteConfig!!.getString("Home_Filter")
+        filter = mFirebaseRemoteConfig.getString("Home_Filter")
 
-        copyright = mFirebaseRemoteConfig!!.getString("Home_Copyright_Owner")
+        copyright = mFirebaseRemoteConfig.getString("Home_Copyright_Owner")
 
-        displayname = mFirebaseRemoteConfig!!.getString("Home_Display_Name")
+        displayname = mFirebaseRemoteConfig.getString("Home_Display_Name")
 
-        downloadFilters = mFirebaseRemoteConfig!!.getString("Home_Download_Filters")
+        downloadFilters = mFirebaseRemoteConfig.getString("Home_Download_Filters")
 
         setNavigation()
         setWebView()
@@ -107,6 +105,7 @@ class HomeFragment : BaseFragment() {
 
     private fun setWebView() {
         val webSet = web?.settings
+
         webSet?.javaScriptEnabled = true
         webSet?.setSupportZoom(true)
         webSet?.allowContentAccess = true
@@ -212,8 +211,6 @@ class HomeFragment : BaseFragment() {
 
         return url.matches(regExp.toRegex())
     }
-
-
 
     override fun onSaveInstanceState(outState: Bundle) {
 

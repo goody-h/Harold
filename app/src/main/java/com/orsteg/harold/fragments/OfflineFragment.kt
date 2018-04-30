@@ -1,17 +1,18 @@
 package com.orsteg.harold.fragments
 
 
+import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.Toast
+import android.widget.Button
 
 import com.orsteg.harold.R
+import com.orsteg.harold.activities.LoginActivity
+import com.orsteg.harold.activities.SignUpActivity
 import com.orsteg.harold.utils.app.Preferences
 
 
@@ -60,6 +61,27 @@ class OfflineFragment : BaseFragment() {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_offline, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val login = view.findViewById<View>(R.id.login) as Button
+        val signUp = view.findViewById<View>(R.id.signup) as Button
+
+
+        login.setOnClickListener {
+            val intent = Intent(context!!, LoginActivity::class.java)
+
+            startActivity(intent)
+        }
+
+        signUp.setOnClickListener {
+            val intent = Intent(context, SignUpActivity::class.java)
+
+            startActivity(intent)
+        }
+
     }
 
     companion object {
