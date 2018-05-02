@@ -46,10 +46,12 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     private var mAuthListener: FirebaseAuth.AuthStateListener? = null
     private var mUserListener: ValueListener? = null
 
-    private var mTabIconsSelected = arrayOf(R.drawable.ic_home_black_24dp,
+    private var mTabIconsSelected = arrayOf(
             R.drawable.ic_school_black_24dp,
             R.drawable.ic_date_range_black_24dp,
-            R.drawable.ic_person_black_24dp)
+            R.drawable.ic_person_black_24dp,
+            R.drawable.ic_home_black_24dp
+    )
 
 
     private var sheet: BottomSheet? = null
@@ -91,7 +93,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
                 // Set Activity Parameters
                 if (!authState) {
                     authState = true
-                    resetGroup(3)
+                    resetGroup(2)
                 }
                 authState = true
 
@@ -107,7 +109,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
                 if (authState) {
                     authState = false
-                    resetGroup(3)
+                    resetGroup(2)
                     mUserRef?.removeEventListener(mUserListener)
                     mUserRef = null
                     mUserListener = null
@@ -150,13 +152,13 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
                             mUser = nUser
                             mUser?.persistUser(this@MainActivity)
 
-                            resetGroup(3)
+                            resetGroup(2)
                         } else if (mUser?.updateUser(nUser) == true){
 
                             mUser = nUser
                             mUser?.persistUser(this@MainActivity)
 
-                            refreshFragment(3)
+                            refreshFragment(2)
 
                         }
                     } else {
@@ -165,7 +167,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
                         authState = false
                         mUser = null
-                        resetGroup(3)
+                        resetGroup(2)
 
                     }
                 }

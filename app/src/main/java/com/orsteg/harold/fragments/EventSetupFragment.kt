@@ -99,7 +99,7 @@ class EventSetupFragment : BaseFragment() {
                 helper.onUpgrade(helper.writableDatabase, 1, 1)
             }
 
-            mListener?.resetGroup(2)
+            mListener?.resetGroup(1)
         }
 
 

@@ -79,7 +79,7 @@ class ResultEditor(private val context: Context) {
             ar.sortWith(Comparator { o1, o2 ->
                 val i1 = o1.getInt("semId")
                 val i2 = o2.getInt("semId")
-                if (i1 > i2) -1 else if (i1 < i2) 1 else 0
+                if (i1 > i2) 1 else if (i1 < i2) -1 else 0
             })
 
             var semId = 0
@@ -96,10 +96,10 @@ class ResultEditor(private val context: Context) {
                         }
 
                         sd?.insertCourse(it.getString("title"), it.getString("code")
-                                , it.getInt("unit"), it.optString("grade", ""))
+                                , it.getDouble("unit"), it.optString("grade", ""))
                     }
 
-            Preferences(context, Preferences.RESULT_PREFERENCES).mEditor.putBoolean("result.changed", false).commit()
+            Preferences(context, Preferences.RESULT_PREFERENCES).mEditor.putBoolean("result.changed", true).commit()
         } catch (e: JSONException){
 
         }

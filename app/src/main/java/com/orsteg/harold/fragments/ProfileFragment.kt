@@ -95,7 +95,7 @@ class ProfileFragment : BaseFragment() {
             val bundle = Bundle()
             mListener?.mUser?.saveUserState(bundle)
             intent.putExtra("USER", bundle)
-            //intent.action = TemplateViewerActivity.ACTION_UPLOAD
+            intent.action = TemplateViewerActivity.ACTION_UPLOAD
             startActivity(intent)
         }), ListItem("Edit profile", R.drawable.ic_edit_black_24dp, View.OnClickListener {
             val intent = Intent(context, ProfileEditActivity::class.java)
@@ -171,7 +171,7 @@ class ProfileFragment : BaseFragment() {
             return i.toLong()
         }
 
-        override fun getView(i: Int, view: View, viewGroup: ViewGroup): View {
+        override fun getView(i: Int, view: View?, viewGroup: ViewGroup?): View {
             val v = LayoutInflater.from(context).inflate(R.layout.info_item, viewGroup, false)
             val t = v.findViewById<TextView>(R.id.text)
             t.text = (getItem(i) as ListItem).text

@@ -23,7 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.TemplateViewerActivity">
+        <activity android:name=".activities.TemplateViewerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".activities.TemplateBrowserActivity">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -34,14 +36,32 @@
         </activity>
         <activity android:name=".activities.AboutActivity"
             android:theme="@style/AppTheme.Full"/>
-        <activity android:name=".activities.DownloadActivity" />
-        <activity android:name=".activities.GradingActivity" />
-        <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.NewEventActivity" />
-        <activity android:name=".activities.PasswordUpdateActivity" />
-        <activity android:name=".activities.ProfileEditActivity" />
-        <activity android:name=".activities.SignUpActivity" />
-        <activity android:name=".activities.TemplateBrowserActivity" />
+
+        <activity android:name=".activities.DownloadActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".activities.TemplateBrowserActivity"/>
+
+        <activity android:name=".activities.GradingActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.NewEventActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.PasswordUpdateActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.ProfileEditActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.SignUpActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.TemplateBrowserActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".activities.MainActivity"/>
 
         <receiver
             android:name=".receivers.AlarmReceiver"
@@ -63,6 +83,16 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <provider
+            android:authorities="com.orsteg.harold.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"/>
+        </provider>
 
     </application>
 

@@ -283,7 +283,7 @@
             android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:background="@drawable/border_filled"
-            android:minHeight="20dp"
+            android:minHeight="35dp"
             android:text="Cancel" />
 
         <Button
@@ -295,7 +295,7 @@
             android:layout_weight="1"
             android:background="@drawable/border_filled"
             android:enabled="false"
-            android:minHeight="20dp"
+            android:minHeight="35dp"
             android:text="Create" />
     </LinearLayout>
 

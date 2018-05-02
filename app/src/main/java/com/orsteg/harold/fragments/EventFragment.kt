@@ -186,7 +186,7 @@ class EventFragment : BaseFragment(), WeekView.EventClickListener, WeekLoader.We
                     R.id.now -> mWeekView!!.goToNow()
                     R.id.reset -> WarningDialog(context!!, "This will reset all events. Continue?"){
                         mPreferences.mEditor.putBoolean("harold.event.setup", false).putInt("event.semester.current", 0).commit()
-                        mListener?.resetGroup(2)
+                        mListener?.resetGroup(1)
 
                         Thread {
                             for (day in TimeConstants.DAYS) {

@@ -77,7 +77,7 @@ class ResultFragment : BaseFragment() {
 
     var Semester_Id: Int = 0
     var GPA: Float = 0.toFloat()
-    var TCU = 0
+    var TCU = 0.0
     var TCU_Display: TextView? = null
     var GPA_Display: TextView? = null
 
@@ -184,7 +184,7 @@ class ResultFragment : BaseFragment() {
                     R.id.refresh -> resetResultState()
                     R.id.upload -> {
                         reset = true
-                        //   getCurrentTemplate(TemplateViewerActivity.ACTION_UPLOAD)
+                        getCurrentTemplate(TemplateViewerActivity.ACTION_UPLOAD)
                     }
                     R.id.current -> toggle!!.setChecked(true)
                     R.id.clear1 -> clearSemester()
@@ -197,11 +197,13 @@ class ResultFragment : BaseFragment() {
                     R.id.set -> {
                         reset = true
                         val intent = Intent(context, TemplateBrowserActivity::class.java)
-                        // intent.action = TemplateViewerActivity.ACTION_APPLY
+                        intent.action = TemplateViewerActivity.ACTION_APPLY
                         startActivity(intent)
                     }
-                    R.id.make -> reset = true
-                // getCurrentTemplate(TemplateViewerActivity.ACTION_SAVE)
+                    R.id.make -> {
+                        reset = true
+                        getCurrentTemplate(TemplateViewerActivity.ACTION_SAVE)
+                    }
                 }
             }
         }
@@ -375,7 +377,7 @@ class ResultFragment : BaseFragment() {
             GPA_Display?.text = "0"
             GPA = 0f
             _cgpa?.text = "0"
-            TCU = 0
+            TCU = 0.0
             TCU_Display?.text = "0"
 
         }
@@ -384,7 +386,7 @@ class ResultFragment : BaseFragment() {
     private fun setSem(SemId: Int) {
 
         Semester_Id = SemId
-        TCU = 0
+        TCU = 0.0
 
         SelectSem = SemId
 
@@ -403,7 +405,7 @@ class ResultFragment : BaseFragment() {
             val SqL_Id = res.getInt(0)
             val Title = res.getString(1)
             val Code = res.getString(2)
-            val Cu = res.getInt(3)
+            val Cu = res.getDouble(3)
             val Grade = res.getString(4)
 
             val cou = Course(context!!, Course_Id, j, Code, Title, Cu, Grade, SqL_Id)
@@ -593,7 +595,13 @@ class ResultFragment : BaseFragment() {
             edit.setOnClickListener {
 
                 AddDialog(context,  sem_Id, true, false, template[position]){ _, cu ->
-                    Cunit.text = cu.toString()
+
+
+                    val s =
+                            if (cu % 1 == 0.0) cu.toInt().toString() 
+                            else cu.toString() 
+
+                    Cunit.text = s
                     _gpacalc()
                     _cgpacalc()
                     notifyDataSetChanged()
@@ -609,12 +617,12 @@ class ResultFragment : BaseFragment() {
                 override fun onItemSelected(_parent: AdapterView<*>?, view: View?, _position: Int, _id: Long) {
 
                     var tt = spin.selectedItem as String
-                    val u: Int
+                    val u: Double
                     val Qp: Float
 
                     if (tt == "Grade") {
                         tt = ""
-                        u = 0
+                        u = 0.0
 
                     } else {
                         u = template[position].cu
@@ -625,10 +633,10 @@ class ResultFragment : BaseFragment() {
                     template[position].editResult(tt)
                     grade1!!.text = tt
 
-                    Qp = gp * u
+                    Qp = (gp * u).toFloat()
 
                     mPreferences.mEditor
-                            .putInt(Course.unitPref(template[position].id), u)
+                            .putFloat(Course.unitPref(template[position].id), u.toFloat())
                             .putFloat(Course.qpPref(template[position].id), Qp).commit()
 
                     _gpacalc()
@@ -640,7 +648,11 @@ class ResultFragment : BaseFragment() {
             }
 
             spin.setSelection(gradingSystem!!.getIndexFromGrade(template[position].grade))
-            Cunit.text = template[position].cu.toString()
+
+            val s =
+                    if (template[position].cu % 1 == 0.0) template[position].cu.toInt().toString() 
+                    else template[position].cu.toString() 
+            Cunit.text = s
 
 
             (v as LinearLayout).addView(editor)
@@ -726,6 +738,7 @@ class ResultFragment : BaseFragment() {
         }
 
         private inner class viewHolder {
+
             internal var title: TextView? = null
             internal var code: TextView? = null
             internal var grade: TextView? = null
@@ -743,7 +756,7 @@ class ResultFragment : BaseFragment() {
 
         for (i in arr!!.template.indices) {
             val Course_id = arr!!.template[i].id
-            Tcu += mPreferences.mPrefs.getInt(Course.unitPref(Course_id), 0)
+            Tcu += mPreferences.mPrefs.getFloat(Course.unitPref(Course_id), 0f)
             Tqp += mPreferences.mPrefs.getFloat(Course.qpPref(Course_id), 0f)
         }
         if (Tcu != 0f) {
@@ -751,7 +764,6 @@ class ResultFragment : BaseFragment() {
         }
 
         EditGPA(gpa)
-
     }
 
     fun _cgpacalc() {
@@ -770,7 +782,7 @@ class ResultFragment : BaseFragment() {
                 if (Course_count != 0) {
                     for (k in 1 until Course_count + 1) {
                         val Course_id = SemId + k
-                        Tcu += mPreferences.mPrefs.getInt(Course.unitPref(Course_id), 0)
+                        Tcu += mPreferences.mPrefs.getFloat(Course.unitPref(Course_id), 0f)
                         Tqp += mPreferences.mPrefs.getFloat(Course.qpPref(Course_id), 0f)
                     }
                 }
@@ -786,9 +798,15 @@ class ResultFragment : BaseFragment() {
 
     }
 
-    fun EditTCU(TCu: Int) {
+    fun EditTCU(TCu: Double) {
         TCU = TCu
-        TCU_Display?.text = TCu.toString()
+
+
+        val s =
+                if (TCu % 1 == 0.0) TCu.toInt().toString() 
+                else TCu.toString() 
+
+        TCU_Display?.text = s
     }
 
     fun EditGPA(GPa: Float) {
@@ -824,7 +842,7 @@ class ResultFragment : BaseFragment() {
             for (m in days.indices) {
                 val day = days[m]
 
-                val count = mPreferences.mPrefs.getInt("Time_count" + day, 0)
+                val count = Event.eventCount(context!!, day)
 
                 if (count != 0) {
                     val helper = EventDatabase(context!!, day)
@@ -852,13 +870,13 @@ class ResultFragment : BaseFragment() {
 
             val handler = FileHandler()
 
-            val file = File(context!!.cacheDir, "temp.tmp.txt")
+            val file = FileHandler.getTemporaryTemp(context!!)
             handler.createTemporaryFile(context!!)
 
             val i = Intent(context, TemplateViewerActivity::class.java)
             i.data = Uri.fromFile(file)
             i.action = action
-           // i.putExtra(TemplateViewerActivity.EXTRA_TEMPORARY, true)
+            i.putExtra(TemplateViewerActivity.EXTRA_TEMPORARY, true)
             startActivity(i)
         })
 

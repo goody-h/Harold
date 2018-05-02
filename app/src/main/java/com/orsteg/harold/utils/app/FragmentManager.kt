@@ -26,10 +26,10 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
     private var initPosition = 0
 
-    private var mGroups = arrayOf(HomeGroup(mFragmentManager),
-            ResultGroup(mFragmentManager),
+    private var mGroups = arrayOf(ResultGroup(mFragmentManager),
             EventGroup(context, mFragmentManager),
-            ProfileGroup(mFragmentManager))
+            ProfileGroup(mFragmentManager),
+            HomeGroup(mFragmentManager))
 
     private var mHistory = ArrayList<Int>()
 

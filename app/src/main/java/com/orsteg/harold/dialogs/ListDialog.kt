@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ListView
 import com.orsteg.harold.R
 import kotlinx.android.synthetic.main.list_dialog_layout.*
 import java.util.ArrayList
@@ -13,9 +14,11 @@ import java.util.ArrayList
 /**
  * Created by goodhope on 4/28/18.
  */
-class ListDialog(context: Context, private val headerTxt: String, private val listItems: ArrayList<String>,
+class ListDialog(context: Context, private val headerTxt: String, var listItems: ArrayList<String>,
                  private val onItemClick: (AdapterView<*>, Int) -> Unit) : Dialog(context) {
 
+
+    var mList: ListView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +27,8 @@ class ListDialog(context: Context, private val headerTxt: String, private val li
         setContentView(R.layout.list_dialog_layout)
 
         header.text = headerTxt
+
+        mList = list
 
         list.emptyView = empty
         list.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, listItems)

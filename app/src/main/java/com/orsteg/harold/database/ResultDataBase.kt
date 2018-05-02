@@ -17,7 +17,7 @@ class ResultDataBase(private val context: Context, private val semId: Int) : SQL
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("CREATE TABLE $semester (ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "$COL_2 TEXT, $COL_3 TEXT, $COL_4 INTEGER, $COL_5 TEXT)")
+                "$COL_2 TEXT, $COL_3 TEXT, $COL_4 REAL, $COL_5 TEXT)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -28,7 +28,7 @@ class ResultDataBase(private val context: Context, private val semId: Int) : SQL
 
     fun getAllData(): Cursor = writableDatabase.rawQuery("Select * from $semester", null)
 
-    fun insertCourse(title: String, code: String, unit: Int, grade: String): Long {
+    fun insertCourse(title: String, code: String, unit: Double, grade: String): Long {
 
         val content = ContentValues()
 
@@ -51,7 +51,7 @@ class ResultDataBase(private val context: Context, private val semId: Int) : SQL
 
         if (res.moveToPosition(id - 1)) {
             val data = arrayOf(res.getInt(0), res.getString(1), res.getString(2),
-                    res.getInt(3), res.getString(4))
+                    res.getDouble(3), res.getString(4))
             res.close()
 
             return data
@@ -78,7 +78,7 @@ class ResultDataBase(private val context: Context, private val semId: Int) : SQL
     }
 
 
-    fun updateCourseData(id: Int, title: String, code: String, unit: Int) {
+    fun updateCourseData(id: Int, title: String, code: String, unit: Double) {
 
         val content = ContentValues()
         content.put(COL_2, title)
