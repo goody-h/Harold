@@ -76,7 +76,7 @@ abstract class BaseFragment : Fragment() {
 
         fun showWarning(message: String, action: () -> Unit)
 
-        fun showLoader(message: String, cancelable: Boolean = true): Dialog
+        fun showLoader(message: String, cancelable: Boolean = true): Dialog?
 
         fun getTools(stubIds: Array<Int>): ArrayList<ViewStub>
 

@@ -66,7 +66,7 @@ class ResultDataBase(private val context: Context, private val semId: Int) : SQL
 
         while (res.moveToNext()){
             if (res.getInt(0) == id) {
-                val a = arrayOf(res.getString(2), res.getString(1))
+                val a = arrayOf(res.getString(1), res.getString(2))
                 res.close()
                 return a
             }

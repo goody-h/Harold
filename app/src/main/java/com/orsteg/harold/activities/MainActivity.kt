@@ -10,6 +10,7 @@ import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -23,15 +24,18 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.orsteg.harold.R
+import com.orsteg.harold.dialogs.UpdateDialog
 import com.orsteg.harold.dialogs.WarningDialog
 import com.orsteg.harold.fragments.BaseFragment
 import com.orsteg.harold.utils.app.FragmentManager
 import com.orsteg.harold.utils.app.Preferences
+import com.orsteg.harold.utils.app.TimeConstants
 import com.orsteg.harold.utils.firebase.References
 import com.orsteg.harold.utils.firebase.ValueListener
 import com.orsteg.harold.utils.user.AppUser
 import com.orsteg.harold.utils.user.User
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionListener, FragmentManager.OnFragmentManagerListener {
 
@@ -49,12 +53,14 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     private var mTabIconsSelected = arrayOf(
             R.drawable.ic_school_black_24dp,
             R.drawable.ic_date_range_black_24dp,
-            R.drawable.ic_person_black_24dp,
-            R.drawable.ic_home_black_24dp
+            R.drawable.ic_person_black_24dp
     )
 
 
     private var sheet: BottomSheet? = null
+
+    private val mRand = Random()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,11 +127,18 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
         mFragmentManager?.initFragment()
 
-        showIntro()
+        FirebaseRemoteConfig.getInstance().fetch(TimeConstants.DAY/1000)
+
+        checkVersion()
     }
 
-    private fun showIntro(){
+    private fun checkVersion(){
+        val new = FirebaseRemoteConfig.getInstance().getLong("version")
+        val current = resources.getString(R.string.version).toLong()
 
+        if (current < new && mRand.nextInt(100) < 60){
+            UpdateDialog(this).show()
+        }
     }
 
     private fun getCurrentUser(user: FirebaseUser?) {
@@ -178,7 +191,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     }
 
     private fun initTabs(){
-            for (i in 0..3) {
+            for (i in 0..2) {
                 val tab = bottomTab.getTabAt(i)
                 if (tab != null)
                     tab.customView = getTabView(i)
@@ -218,9 +231,11 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         val id = item?.itemId
 
         when (id) {
-            R.id.action_settings -> return true
             R.id.action_help -> {
-
+                val intent = Intent(Intent.ACTION_VIEW)
+                val url = FirebaseRemoteConfig.getInstance().getString("help_site")
+                intent.data = Uri.parse(url)
+                startActivity(intent)
             }
             R.id.action_about -> {
                 val intent = Intent(this, AboutActivity::class.java)
@@ -303,8 +318,9 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         WarningDialog(this, message, action).show()
     }
 
-    override fun showLoader(message: String, cancelable: Boolean): Dialog {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun showLoader(message: String, cancelable: Boolean): Dialog? {
+
+        return null
     }
 
     override fun setToolbarTitle(title: String) {

@@ -26,10 +26,11 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
     private var initPosition = 0
 
-    private var mGroups = arrayOf(ResultGroup(mFragmentManager),
+    private var mGroups = arrayOf(
+            ResultGroup(mFragmentManager),
             EventGroup(context, mFragmentManager),
-            ProfileGroup(mFragmentManager),
-            HomeGroup(mFragmentManager))
+            ProfileGroup(mFragmentManager)
+            )
 
     private var mHistory = ArrayList<Int>()
 
@@ -168,28 +169,6 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
         fun setToolbarTitle(title: String)
 
-    }
-
-    class HomeGroup(mFragmentManager: FragmentManager): FragmentGroup(mFragmentManager) {
-
-        override val title: String = "Home"
-
-        init {
-            fragTag = "com.harold.fragment.home"
-        }
-
-        override fun getFragment(reset: Boolean): BaseFragment {
-
-            var fragment = getCurrentFragment()
-            if (fragment == null) {
-                fragment = HomeFragment.newInstance()
-                newFrag = true
-            } else {
-                newFrag = false
-            }
-
-            return fragment
-        }
     }
 
     class ResultGroup(mFragmentManager: FragmentManager): FragmentGroup(mFragmentManager) {

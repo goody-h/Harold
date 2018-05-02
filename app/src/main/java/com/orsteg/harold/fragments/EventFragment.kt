@@ -165,8 +165,9 @@ class EventFragment : BaseFragment(), WeekView.EventClickListener, WeekLoader.We
         viewtype.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (!init) {
-                    setupWeekView(position)
                     mPreferences.mEditor.putInt("WeekViewType", position).commit()
+                    initiateEvents()
+                    setupWeekView(position)
 
                 }
                 init = false
@@ -260,19 +261,19 @@ class EventFragment : BaseFragment(), WeekView.EventClickListener, WeekLoader.We
                 val helper = EventDatabase(context!!, day)
 
                 val res = helper.getAllData()
+                val type = mPreferences.mPrefs.getInt("WeekViewType", 0)
 
                 for (j in 1 until count + 1) {
                     res.moveToPosition(j - 1)
                     val SqL_Id = res.getInt(0)
                     val Course_id = res.getInt(1)
                     val venue = res.getString(2)
-                    val lecturer = res.getString(3)
-                    val start = res.getInt(4)
-                    val end = res.getInt(5)
+                    val start = res.getInt(3)
+                    val end = res.getInt(4)
 
-                    val time = Event(context!!, SqL_Id, Course_id, day, j, venue, lecturer, start, end)
+                    val time = Event(context!!, SqL_Id, Course_id, day, j, venue, start, end)
 
-                    if (start in s..(e - 1) && end > s && end <= e) mEvents.add(time.getWeekViewEvent())
+                    if (start in s..(e - 1) && end > s && end <= e) mEvents.add(time.getWeekViewEvent(type))
                 }
                 res.close()
 

@@ -12,6 +12,7 @@ import com.orsteg.harold.R
 import com.orsteg.harold.database.EventDatabase
 import com.orsteg.harold.database.ResultDataBase
 import com.orsteg.harold.dialogs.AddDialog
+import com.orsteg.harold.receivers.AlarmReceiver
 import com.orsteg.harold.utils.app.Preferences
 import com.orsteg.harold.utils.event.Event
 import com.orsteg.harold.utils.event.NotificationScheduler
@@ -22,7 +23,6 @@ class NewEventActivity : AppCompatActivity() {
 
     private var title1: TextView? = null
     private var venue: EditText? = null
-    private var lect: EditText? = null
     private var code: Spinner? = null
     private var time: Array<Any?> = arrayOfNulls(3)
     private var ok: Button? = null
@@ -68,7 +68,6 @@ class NewEventActivity : AppCompatActivity() {
 
         title1 = findViewById<View>(R.id.title) as TextView
         venue = findViewById<View>(R.id.venue) as EditText
-        lect = findViewById<View>(R.id.lecturer) as EditText
 
         code = findViewById<View>(R.id.code) as Spinner
         ok = findViewById<View>(R.id.ok) as Button
@@ -120,7 +119,7 @@ class NewEventActivity : AppCompatActivity() {
         ok?.setOnClickListener {
             val count = Event.eventCount(this, Day)
 
-            val t = Event(context, 0, time[2] as Int, Day,count + 1, venue?.text.toString(), lect?.text.toString(), Start, end)
+            val t = Event(context, 0, time[2] as Int, Day,count + 1, venue?.text.toString(), Start, end)
             t.addEvent()
             setAlarm(t)
             finish()
@@ -178,7 +177,6 @@ class NewEventActivity : AppCompatActivity() {
 
     private fun clearInput() {
         venue?.setText("")
-        lect?.setText("")
         title1?.text = ""
         if (timestate != 0) findViewById<View>(timestate).setBackgroundColor(resources.getColor(R.color.white))
         times?.visibility = View.GONE
@@ -346,7 +344,7 @@ class NewEventActivity : AppCompatActivity() {
     }
 
     fun setAlarm(event: Event) {
-        val intent = Intent()
+        val intent = Intent(this, AlarmReceiver::class.java)
 
         intent.putExtras(event.getBundle())
 

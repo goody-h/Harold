@@ -2,6 +2,7 @@ package com.orsteg.harold.utils.event
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import com.alamkanak.weekview.WeekViewEvent
 import com.alamkanak.weekview.WeekViewUtil
 import com.orsteg.harold.R
@@ -15,8 +16,7 @@ import java.util.*
  * Created by goodhope on 4/16/18.
  */
 class Event(private val context: Context, var sqlId: Int, var courseId: Int, var day: String,
-            var period: Int = 0, var venue: String = "N/A", var lecturer: String = "N/A",
-            var startTime: Int = 0, var endTime: Int = 0) {
+            var period: Int = 0, var venue: String = "N/A", var startTime: Int = 0, var endTime: Int = 0) {
 
     var notificationId = (TimeConstants.DAYS.indexOf(day) + 1) * 100 + sqlId
     var dayIndex = TimeConstants.DAYS.indexOf(day) + 1
@@ -42,19 +42,18 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
         }
 
         if (period > count) {
-            sqlId = database.insertEvent(courseId, venue, lecturer, startTime, endTime).toInt()
+            sqlId = database.insertEvent(courseId, venue, startTime, endTime).toInt()
         }
     }
 
-    fun editInfo(courseId: Int, venue: String, lecturer: String, startTime: Int, endTime: Int) {
+    fun editInfo(courseId: Int, venue: String, startTime: Int, endTime: Int) {
 
         this.courseId = courseId
         this.venue = venue
-        this.lecturer = lecturer
         this.startTime = startTime
         this.endTime = endTime
 
-        database.updateEventData(sqlId, courseId, venue, lecturer, startTime, endTime)
+        database.updateEventData(sqlId, courseId, venue, startTime, endTime)
     }
 
 
@@ -74,8 +73,8 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
         val obj = result.getCourseBySqlId(courseId)
 
         if (obj != null) {
-            cTitle = obj[1]
-            cCode = obj[0]
+            cTitle = obj[0]
+            cCode = obj[1]
         } else {
 
             database.deleteData(sqlId)
@@ -89,7 +88,6 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
         val b = Bundle()
 
         b.putString(VENUE, venue)
-        b.putString(LECTURER, lecturer)
         b.putInt(START_TIME, startTime)
         b.putInt(END_TIME, endTime)
         b.putString(C_TITLE, cTitle)
@@ -101,7 +99,7 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
     }
 
 
-    fun getWeekViewEvent(): WeekViewEvent {
+    fun getWeekViewEvent(size: Int): WeekViewEvent {
         val start = WeekViewUtil.today()
 
         val startArr = getHandM(startTime)
@@ -114,7 +112,7 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
         endTime.set(Calendar.HOUR_OF_DAY, endArr[0])
         endTime.set(Calendar.MINUTE, endArr[1])
 
-        val event = WeekViewEvent(notificationId.toLong(), "$cCode $cTitle", venue, start, endTime)
+        val event = WeekViewEvent(notificationId.toLong(), "$cCode ${if (size < 2) cTitle else ""}", venue, start, endTime)
         event.color = context.resources.getColor(R.color.event_color_01)
 
         return event
@@ -128,12 +126,11 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
     companion object {
 
         val VENUE = "event.venue"
-        val LECTURER = "event.lecturer"
         val START_TIME = "event.startTime"
         val END_TIME = "event.endTime"
         val C_TITLE = "event.cTitle"
         val C_CODE = "event.cCode"
-        val DAY_INDEX = "event.cTitle"
+        val DAY_INDEX = "event.dayIndex"
         val NOTIFICATION_ID = "event.notificationId"
         val CURRENT_SEM = "event.semester.current"
         
@@ -176,8 +173,8 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
 
             if (o != null) {
 
-                return Event(context, o[0] as Int, o[1] as Int, TimeConstants.DAYS[d - 1], o[6] as Int,
-                        o[2] as String, o[3] as String, o[4] as Int, o[5] as Int)
+                return Event(context, o[0] as Int, o[1] as Int, TimeConstants.DAYS[d - 1], o[5] as Int,
+                        o[2] as String, o[3] as Int, o[4] as Int)
             }
 
             return null

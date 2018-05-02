@@ -16,16 +16,19 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val b = intent.extras
         if (b != null) {
+
             val prefs = Preferences(context, Preferences.EVENT_PREFERENCES)
 
             val s = prefs.mPrefs.getInt("event.day.time.start", 0) * TimeConstants.HOUR
-            val e = prefs.mPrefs.getInt("event.day.time.end", 0) * TimeConstants.HOUR
+            val e = prefs.mPrefs.getInt("event.day.time.end", 24) * TimeConstants.HOUR
 
-            val start = b.getInt("Start")
-            val end = b.getInt("End")
+            val start = b.getInt(Event.START_TIME)
+            val end = b.getInt(Event.END_TIME)
 
-            if (start in s..(e - 1) && end > s && end <= e)
+            if (start in s..(e - 1) && end > s && end <= e){
                 NotificationScheduler.showNotification(context, b.getInt(Event.NOTIFICATION_ID), b)
+
+            }
 
         }
     }

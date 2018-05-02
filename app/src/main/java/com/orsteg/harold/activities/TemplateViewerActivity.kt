@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import com.orsteg.harold.R
@@ -602,19 +603,20 @@ class TemplateViewerActivity : AppCompatActivity(), DetailsDialog.DetailsDialogI
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
 
-        if (id == R.id.action_settings) {
-            return true
-        } else if (id == R.id.action_help) {
-
-        } else if (id == R.id.action_about) {
-            val intent = Intent(this, AboutActivity::class.java)
-            startActivity(intent)
-        } else if (id == R.id.apply) {
-            applyTemplate()
-        } else if (id == R.id.upload) {
-            uploadTemplate()
-        } else if (id == R.id.details) {
-            showDetails("")
+        when (id) {
+            R.id.action_help -> {
+                val intent = Intent(Intent.ACTION_VIEW)
+                val url = FirebaseRemoteConfig.getInstance().getString("help_site")
+                intent.data = Uri.parse(url)
+                startActivity(intent)
+            }
+            R.id.action_about -> {
+                val intent = Intent(this, AboutActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.apply -> applyTemplate()
+            R.id.upload -> uploadTemplate()
+            R.id.details -> showDetails("")
         }
 
         return super.onOptionsItemSelected(item)

@@ -24,11 +24,11 @@ class AboutActivity : AppCompatActivity() {
             val uri = Uri.parse("market://details?id=" + packageName)
             val gotoMarket = Intent(Intent.ACTION_VIEW, uri)
             var flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-            if (Build.VERSION.SDK_INT >= 21) {
-                flags = flags or Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+            flags = if (Build.VERSION.SDK_INT >= 21) {
+                flags or Intent.FLAG_ACTIVITY_NEW_DOCUMENT
             } else {
 
-                flags = flags or Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
+                flags or Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
             }
             gotoMarket.addFlags(flags)
             try {
@@ -52,8 +52,6 @@ class AboutActivity : AppCompatActivity() {
             val url = view.context.resources.getString(R.string.github_repo)
             intent.data = Uri.parse(url)
             startActivity(intent)
-        }), InfoItem("Licences", View.OnClickListener { view ->
-        //    startActivity(Intent(view.context, OssLicensesMenuActivity::class.java))
         }))
 
         val list = findViewById<ListView>(R.id.options)

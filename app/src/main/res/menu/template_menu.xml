@@ -16,10 +16,6 @@
         android:title="@string/details"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_settings"
-        android:title="@string/settings"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_help"
         android:title="@string/help"
         app:showAsAction="never" />

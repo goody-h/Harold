@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.orsteg.harold.R
 import com.orsteg.harold.dialogs.LoaderDialog
 import com.orsteg.harold.dialogs.PlainDialog
@@ -330,9 +331,12 @@ class TemplateBrowserActivity : AppCompatActivity() {
         val id = item?.itemId
 
         when (id) {
-            R.id.action_settings -> return true
             R.id.action_help -> {
+                val intent = Intent(Intent.ACTION_VIEW)
+                val url = FirebaseRemoteConfig.getInstance().getString("help_site")
 
+                intent.data = Uri.parse(url)
+                startActivity(intent)
             }
             R.id.action_about -> {
                 val intent = Intent(this, AboutActivity::class.java)
