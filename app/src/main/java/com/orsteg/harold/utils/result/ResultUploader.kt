@@ -132,7 +132,10 @@ class ResultUploader(private val context: Context, private val activity: Activit
         if (save)
             (activity as TemplateViewerActivity).save(name, object : TemplateViewerActivity.OnCompleteListener {
                 override fun onComplete() {
-                    activity.runOnUiThread { dialog.dismiss() }
+                    activity.runOnUiThread {
+                        dialog.dismiss()
+                        activity.showAd()
+                    }
                 }
 
                 override fun onFailure() {
@@ -140,7 +143,10 @@ class ResultUploader(private val context: Context, private val activity: Activit
                 }
             })
         else
-            activity.runOnUiThread { dialog.dismiss() }
+            activity.runOnUiThread {
+                dialog.dismiss()
+                (activity as TemplateViewerActivity).showAd()
+            }
 
     }
 

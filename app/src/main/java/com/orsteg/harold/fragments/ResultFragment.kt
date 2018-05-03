@@ -795,25 +795,40 @@ class ResultFragment : BaseFragment() {
             cgpa = Tqp / Tcu
         }
         mPreferences.mEditor.putFloat("CGPA", cgpa).commit()
-        _cgpa?.text = setgpa(cgpa)
+        _cgpa?.text = cgpa.string()
 
     }
 
     fun EditTCU(TCu: Double) {
         TCU = TCu
 
-
-        val s =
-                if (TCu % 1 == 0.0) TCu.toInt().toString() 
-                else TCu.toString() 
-
-        TCU_Display?.text = s
+        TCU_Display?.text = TCu.string()
     }
 
     fun EditGPA(GPa: Float) {
         GPA = GPa
-        GPA_Display?.text = setgpa(GPa)
+        GPA_Display?.text = GPa.string()
         mPreferences.mEditor.putFloat("GPA" + Semester_Id, GPa).commit()
+    }
+
+    fun Double.string(): String {
+        val d = this.toString().indexOf(".")
+
+        if (this % 1 == 0.0) return this.toInt().toString()
+
+        if (d + 2 < this.toString().length) return this.toString()
+
+        return this.toString().substring(0..d+2)
+    }
+
+    fun Float.string(): String {
+        val d = this.toString().indexOf(".")
+
+        if (this % 1 == 0f) return this.toInt().toString()
+
+        if (d + 2 < this.toString().length) return this.toString()
+
+        return this.toString().substring(0..d+2)
     }
 
 
@@ -1029,18 +1044,6 @@ class ResultFragment : BaseFragment() {
             args.putString(ARG_PARAM2, param2)
             fragment.arguments = args
             return fragment
-        }
-
-        fun setgpa(gpa: Float): String {
-            return if (gpa == 0f) {
-                "0"
-            } else {
-                if (gpa.toString().length > 4) {
-                    gpa.toString().substring(0, 4)
-                } else {
-                    gpa.toString()
-                }
-            }
         }
     }
 }// Required empty public constructor

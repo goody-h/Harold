@@ -10,12 +10,14 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.TextView
+import com.google.android.gms.ads.AdRequest
 import com.orsteg.harold.R
 import com.orsteg.harold.dialogs.DetailsDialog
 import com.orsteg.harold.fragments.BaseDownloadFragment
 import com.orsteg.harold.fragments.TemplateFragment
 import com.orsteg.harold.fragments.TemplateLevelFragment
 import com.orsteg.harold.utils.user.AppUser
+import kotlinx.android.synthetic.main.activity_download.*
 
 class DownloadActivity : AppCompatActivity(), DetailsDialog.DetailsDialogInterface {
 
@@ -55,6 +57,7 @@ class DownloadActivity : AppCompatActivity(), DetailsDialog.DetailsDialogInterfa
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        adView.loadAd(AdRequest.Builder().build())
 
         others = findViewById(R.id.others)
         ins = findViewById(R.id.institution)

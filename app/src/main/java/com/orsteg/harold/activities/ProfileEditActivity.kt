@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.alamkanak.weekview.WeekViewUtil
+import com.google.android.gms.ads.AdRequest
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -25,6 +26,7 @@ import com.orsteg.harold.utils.firebase.EdRequest
 import com.orsteg.harold.utils.firebase.References
 import com.orsteg.harold.utils.firebase.ValueListener
 import com.orsteg.harold.utils.user.AppUser
+import kotlinx.android.synthetic.main.activity_profile_edit.*
 import java.util.*
 
 class ProfileEditActivity : AppCompatActivity() {
@@ -75,6 +77,9 @@ class ProfileEditActivity : AppCompatActivity() {
 
         setSupportActionBar(findViewById<View>(R.id.toolbar4) as Toolbar)
         supportActionBar?.setTitle("Edit Profile")
+
+        adView.loadAd(AdRequest.Builder().build())
+
 
         val profile = findViewById<ListView>(R.id.details)
 

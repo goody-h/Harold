@@ -15,6 +15,8 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.*
 import android.widget.*
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -34,6 +36,7 @@ import com.orsteg.harold.utils.app.Preferences
 import com.orsteg.harold.utils.result.*
 import com.orsteg.harold.utils.user.AppUser
 import com.orsteg.harold.utils.user.User
+import kotlinx.android.synthetic.main.activity_template_viewer.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -61,6 +64,9 @@ class TemplateViewerActivity : AppCompatActivity(), DetailsDialog.DetailsDialogI
     private var li: FirebaseAuth.AuthStateListener? = null
 
     private var downloadable = false
+
+    private lateinit var mInterstitialAd: InterstitialAd
+    private var mRandom = Random()
 
 
     private val inputStream: InputStream?
@@ -90,6 +96,12 @@ class TemplateViewerActivity : AppCompatActivity(), DetailsDialog.DetailsDialogI
         supportActionBar?.title = "Template preview"
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        adView.loadAd(AdRequest.Builder().build())
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = "ca-app=pub-3940256099942544/10331737"
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+
 
         loader = LoaderDialog(this)
 
@@ -326,6 +338,8 @@ class TemplateViewerActivity : AppCompatActivity(), DetailsDialog.DetailsDialogI
                     runOnUiThread {
                         loader!!.dismiss()
                         Toast.makeText(c, "Save success", Toast.LENGTH_SHORT).show()
+
+                        showAd()
                     }
                 }
 
@@ -341,6 +355,13 @@ class TemplateViewerActivity : AppCompatActivity(), DetailsDialog.DetailsDialogI
             })
         }
 
+    }
+
+    fun showAd(){
+
+        if (mInterstitialAd.isLoaded && mRandom.nextInt(100) < 50){
+            mInterstitialAd.show()
+        }
     }
 
     fun save(name: String, complete: OnCompleteListener) {

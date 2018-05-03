@@ -11,10 +11,12 @@ import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.Switch
 import android.widget.TextView
+import com.google.android.gms.ads.AdRequest
 import com.orsteg.harold.R
 import com.orsteg.harold.dialogs.PlainDialog
 import com.orsteg.harold.utils.app.Preferences
 import com.orsteg.harold.utils.result.GradingSystem
+import kotlinx.android.synthetic.main.activity_grading.*
 import java.util.ArrayList
 
 class GradingActivity : AppCompatActivity() {
@@ -25,6 +27,9 @@ class GradingActivity : AppCompatActivity() {
 
         setSupportActionBar(findViewById<View>(R.id.toolbar2) as Toolbar)
         supportActionBar?.title = "Grading System"
+
+        adView.loadAd(AdRequest.Builder().build())
+
         init()
         findViewById<View>(R.id.cancel).setOnClickListener { finish() }
 

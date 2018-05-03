@@ -1,6 +1,5 @@
 package com.orsteg.harold.fragments
 
-
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -14,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.google.android.gms.ads.AdRequest
 import com.google.firebase.auth.FirebaseAuth
 
 import com.orsteg.harold.R
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 
 /**
  * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
+ * Use the [ProfileFragment.newInstance] facjtory method to
  * create an instance of this fragment.
  */
 class ProfileFragment : BaseFragment() {
@@ -33,6 +33,7 @@ class ProfileFragment : BaseFragment() {
     override val mPrefType: String = Preferences.APP_PREFERENCES
 
     override fun onSaveInstanceState(outState: Bundle) {
+
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -76,6 +77,8 @@ class ProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        adView.loadAd(AdRequest.Builder().build())
 
         val username = view.findViewById<TextView>(R.id.userName)
 

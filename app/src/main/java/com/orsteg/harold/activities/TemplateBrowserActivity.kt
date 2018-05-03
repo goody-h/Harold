@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.*
 import android.widget.*
+import com.google.android.gms.ads.AdRequest
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,6 +27,7 @@ import com.orsteg.harold.dialogs.WarningDialog
 import com.orsteg.harold.utils.app.AndroidPermissions
 import com.orsteg.harold.utils.result.FileHandler
 import com.orsteg.harold.utils.user.AppUser
+import kotlinx.android.synthetic.main.activity_template_browser.*
 import java.io.File
 import java.util.ArrayList
 
@@ -65,6 +67,9 @@ class TemplateBrowserActivity : AppCompatActivity() {
         supportActionBar?.title = "Template browser"
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        adView.loadAd(AdRequest.Builder().build())
+
 
         mUser = AppUser.getPersistentUser(this)
         selectedFiles = ArrayList()

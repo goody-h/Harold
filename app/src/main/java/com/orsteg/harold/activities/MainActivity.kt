@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat
 import android.view.*
 import android.widget.ImageView
 import com.cocosw.bottomsheet.BottomSheet
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -70,6 +71,8 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
         val prefs = Preferences(this)
         FirebaseRemoteConfig.getInstance().setDefaults(R.xml.remote_config_defaults)
+
+        MobileAds.initialize(this, resources.getString(R.string.admob_app_id))
 
 
         mUser = AppUser.getPersistentUser(this)
