@@ -68,7 +68,7 @@
         <ListView
             android:id="@+id/options"
             android:layout_width="match_parent"
-            android:layout_height="210dp"
+            android:layout_height="150dp"
             android:isScrollContainer="false"
             android:nestedScrollingEnabled="true"
             android:scrollbars="none"></ListView>

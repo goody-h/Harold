@@ -12,8 +12,8 @@
     <string name="about">About</string>
     <string name="delete_event">Delete event</string>
     <string name="goto_now">Goto now</string>
-    <string name="set_start_time">Set start time</string>
-    <string name="set_end_time">Set end time</string>
+    <string name="set_start_time">Set first hour</string>
+    <string name="set_end_time">Set last hour</string>
     <string name="reset_timetable">Reset timetable</string>
     <string name="apply_template">Apply template</string>
     <string name="grading_system">Grading system</string>
