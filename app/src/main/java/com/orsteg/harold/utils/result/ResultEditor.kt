@@ -121,6 +121,7 @@ class ResultEditor(private val context: Context) {
             }
 
             res.close()
+            helper.close()
         }
     }
 

@@ -222,6 +222,7 @@ class NewEventActivity : AppCompatActivity() {
 
         kode.add("Add new Course")
         res.close()
+        helper.close()
 
         adapt1 = spinAdapt1(this, kode, id, title)
 
@@ -297,8 +298,8 @@ class NewEventActivity : AppCompatActivity() {
 
             for (j in 0 until count) {
                 res.moveToPosition(j)
-                val start = res.getInt(4)
-                val end = res.getInt(5)
+                val start = res.getInt(3)
+                val end = res.getInt(4)
 
                 if (start > Start && start < tim || end > Start && end < tim) {
                     slot = false
@@ -307,6 +308,7 @@ class NewEventActivity : AppCompatActivity() {
 
             }
             res.close()
+            helper.close()
         }
 
         return slot
@@ -327,8 +329,8 @@ class NewEventActivity : AppCompatActivity() {
 
             for (j in 0 until count) {
                 res.moveToPosition(j)
-                val start = res.getInt(4)
-                val end = res.getInt(5)
+                val start = res.getInt(3)
+                val end = res.getInt(4)
 
                 if (tim > start && tim < end) {
                     slot = false
@@ -337,6 +339,7 @@ class NewEventActivity : AppCompatActivity() {
 
             }
             res.close()
+            helper.close()
         }
 
         return slot

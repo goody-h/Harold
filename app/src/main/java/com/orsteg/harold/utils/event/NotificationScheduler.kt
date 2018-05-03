@@ -48,6 +48,7 @@ object NotificationScheduler {
                     cancelReminder(context, nId)
                 }
                 res.close()
+                database.close()
             }
         }
     }
@@ -82,6 +83,7 @@ object NotificationScheduler {
                     setReminder(context, event.startTime, event.endTime, event.notificationId, intent)
                 }
                 res.close()
+                database.close()
 
             }
 

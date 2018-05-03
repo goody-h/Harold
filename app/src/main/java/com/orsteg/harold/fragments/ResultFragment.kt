@@ -415,6 +415,7 @@ class ResultFragment : BaseFragment() {
             courses.add(cou)
         }
         res.close()
+        helper.close()
 
         arr = array(context!!)
         arr?.template = courses
@@ -857,6 +858,7 @@ class ResultFragment : BaseFragment() {
                         Event(context!!, SqL_Id, Course_id, day, j)
                     }
                     res.close()
+                    helper.close()
                 }
             }
         })

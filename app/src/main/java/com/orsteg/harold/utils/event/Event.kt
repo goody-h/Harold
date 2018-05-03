@@ -72,6 +72,8 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
 
         val obj = result.getCourseBySqlId(courseId)
 
+        result.close()
+
         if (obj != null) {
             cTitle = obj[0]
             cCode = obj[1]
@@ -176,6 +178,8 @@ class Event(private val context: Context, var sqlId: Int, var courseId: Int, var
                 return Event(context, o[0] as Int, o[1] as Int, TimeConstants.DAYS[d - 1], o[5] as Int,
                         o[2] as String, o[3] as Int, o[4] as Int)
             }
+
+            database.close()
 
             return null
         }

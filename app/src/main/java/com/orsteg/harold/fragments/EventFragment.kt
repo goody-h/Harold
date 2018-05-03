@@ -276,6 +276,7 @@ class EventFragment : BaseFragment(), WeekView.EventClickListener, WeekLoader.We
                     if (start in s..(e - 1) && end > s && end <= e) mEvents.add(time.getWeekViewEvent(type))
                 }
                 res.close()
+                helper.close()
 
             }
 

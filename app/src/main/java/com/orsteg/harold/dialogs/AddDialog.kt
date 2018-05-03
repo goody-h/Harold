@@ -58,7 +58,7 @@ class AddDialog(context: Context, private var id: Int, private val staticId: Boo
             if(!new){
                 title.setText(course?.title)
                 val s =
-                        if (course?.cu?:0 % 1 == 0.0) course?.cu?.toInt().toString() 
+                        if (course?.cu?:0 % 1 == 0) course?.cu?.toInt().toString()
                         else course?.cu.toString()
 
                 cu.setText(s)

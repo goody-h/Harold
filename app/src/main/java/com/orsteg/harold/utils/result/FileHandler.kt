@@ -239,7 +239,10 @@ class FileHandler {
         dataBuilder.append("\n${tab(3)}]\n${tab(2)}}")
 
 
-        val data = Html.escapeHtml(dataBuilder.toString())
+        val data = dataBuilder.toString()
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
 
         val fileData = wrapFile(data, isTemplate)
 
