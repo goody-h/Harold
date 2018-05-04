@@ -32,7 +32,7 @@
             android:layout_gravity="center_horizontal"
             android:visibility="gone"
             app:adSize="BANNER"
-            app:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+            app:adUnitId="@string/result_ad" />
 
         <View
             android:id="@+id/view2"
