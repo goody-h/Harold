@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="11dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="4dp">
+
+        <TextView
+            android:id="@+id/grade"
+            android:layout_width="40dp"
+            android:layout_height="38dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignWithParentIfMissing="false"
+            android:layout_centerVertical="true"
+            android:background="@color/grey"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="A"
+            android:textColor="@android:color/background_dark"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/Course_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Course_code"
+            android:layout_toLeftOf="@+id/grade"
+            android:layout_toRightOf="@+id/index"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="TextView"
+            android:textColor="?attr/colorControlNormal"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/index"
+            android:layout_width="28dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Course_code"
+            android:text="0"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/Course_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="@android:color/background_dark"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+</LinearLayout>

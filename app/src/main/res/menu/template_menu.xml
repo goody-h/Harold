@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.orsteg.harold.activities.TemplateViewer">
+
+    <item
+        android:id="@+id/upload"
+        android:title="@string/upload"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/apply"
+        android:title="@string/apply"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/details"
+        android:title="@string/details"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_help"
+        android:title="@string/help"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/about"
+        app:showAsAction="never" />
+</menu>

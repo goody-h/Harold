@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">Harold</string>
+    <string name="version">1</string>
+
+    <string name="github_repo">http://github.com/goody-h/harold</string>
+    <string name="email">orsteg.apps@gmail.com</string>
+
+    <string name="admob_app_id">ca-app-pub-2224977611625866~6153956063</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="help">Help</string>
+    <string name="settings">settings</string>
+    <string name="about">About</string>
+    <string name="delete_event">Delete event</string>
+    <string name="goto_now">Goto now</string>
+    <string name="set_start_time">Set first hour</string>
+    <string name="set_end_time">Set last hour</string>
+    <string name="reset_timetable">Reset timetable</string>
+    <string name="apply_template">Apply template</string>
+    <string name="grading_system">Grading system</string>
+    <string name="make_template">Make template</string>
+    <string name="make_current_semester">Make current semester</string>
+    <string name="upload_template">Upload template</string>
+    <string name="save_result_state">Save result state</string>
+    <string name="restore_saved_state">Restore saved state</string>
+    <string name="clear_semester">Clear semester</string>
+    <string name="clear_result">Clear result</string>
+    <string name="upload">Upload</string>
+    <string name="apply">Apply</string>
+    <string name="details">Details</string>
 </resources>

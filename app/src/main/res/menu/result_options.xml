@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/set"
+        android:icon="@drawable/ic_format_paint_black_24dp"
+        android:title="@string/apply_template" />
+    <item
+        android:id="@+id/grading"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/grading_system" />
+    <item
+        android:id="@+id/make"
+        android:icon="@drawable/ic_build_black_24dp"
+        android:title="@string/make_template" />
+    <item
+        android:id="@+id/current"
+        android:icon="@drawable/ic_flash_on_black_24dp"
+        android:title="@string/make_current_semester" />
+    <item
+        android:id="@+id/upload"
+        android:icon="@drawable/ic_cloud_upload_black_24dp"
+        android:title="@string/upload_template"/>
+    <item
+        android:id="@+id/save1"
+        android:icon="@drawable/ic_archive_black_24dp"
+        android:title="@string/save_result_state" />
+    <item
+        android:id="@+id/refresh"
+        android:icon="@drawable/ic_refresh_black_24dp"
+        android:title="@string/restore_saved_state"/>
+    <item
+        android:id="@+id/clear1"
+        android:icon="@drawable/ic_delete_black_24dp"
+        android:title="@string/clear_semester"/>
+    <item
+        android:id="@+id/clear2"
+        android:icon="@drawable/ic_delete_sweep_black_24dp"
+        android:title="@string/clear_result" />
+</menu>

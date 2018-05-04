@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- START xml_defaults -->
+<defaultsMap>
+    <entry>
+        <key>contact_info</key>
+        <value>Email: orsteg.apps@gmail.com||Github: github.com/goody-h/harold</value>
+    </entry>
+    <entry>
+        <key>help_site</key>
+        <value>http://goody-h.github.io/harold</value>
+    </entry>
+
+    <entry>
+        <key>version</key>
+        <value>1</value>
+    </entry>
+
+</defaultsMap>
+    <!-- END xml_defaults -->

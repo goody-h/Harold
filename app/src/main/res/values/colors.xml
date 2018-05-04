@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">@color/white</color>
+    <color name="colorPrimaryDark">#aa4400</color>
+    <color name="colorAccent">#d45500</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="black_25_transparent">#40000000</color>
+
+    <color name="chrome_grey">#F2F2F2</color>
+    <color name="black">#000000</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="grey">#d1d1d4</color>
+
+    <color name="toolbar">#efefef</color>
+    <color name="toolbar_text">#8f000000</color>
+
+    <color name="event_color_01">#59dbe0</color>
+    <color name="event_color_02">#f57f68</color>
+
 </resources>
