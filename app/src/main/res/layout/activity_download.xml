@@ -34,6 +34,14 @@
         android:orientation="vertical"
         app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
 
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-3940256099942544/630078111"></com.google.android.gms.ads.AdView>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,7 +102,7 @@
         app:backgroundTint="@color/colorAccent"
         app:elevation="7dp"
         app:fabSize="normal"
-        app:layout_anchor="@id/container"
+        app:layout_anchor="@id/pager"
         app:layout_anchorGravity="bottom|right"
         app:srcCompat="@drawable/ic_cloud_upload_black_24dp" />
 

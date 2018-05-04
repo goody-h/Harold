@@ -2,6 +2,7 @@ package com.orsteg.harold.utils.result
 
 import android.content.Context
 import android.os.Environment
+import android.text.Html
 import android.util.Xml
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.orsteg.harold.database.ResultDataBase
@@ -203,6 +204,7 @@ class FileHandler {
         var semId = 1100
         while (semId < 9400) {
             val helper = ResultDataBase(context, semId)
+            if (Semester.courseCount(context, semId) == 0) helper.onUpgrade(helper.writableDatabase, 1, 1)
             val res = helper.getAllData()
 
 
@@ -220,7 +222,7 @@ class FileHandler {
                         .append("{ \"semId\"=$semId")
                         .append(", \"title\"=\"${res.getString(1)}\"")
                         .append(", \"code\"=\"${res.getString(2)}\"")
-                        .append(", \"unit\"=${res.getInt(3)}")
+                        .append(", \"unit\"=${res.getDouble(3)}")
                         .append(", \"grade\"=\"$grade\" }")
 
                 dataBuilder.append("${tab(4)}$courseBuilder")
@@ -241,6 +243,7 @@ class FileHandler {
                 .replace("&", "&amp;")
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
+
         val fileData = wrapFile(data, isTemplate)
 
         val outputStream: FileOutputStream

@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">Harold</string>
+    <string name="version">1</string>
 
     <string name="github_repo">http://github.com/goody-h/harold</string>
     <string name="email">orsteg.apps@gmail.com</string>
+
+    <string name="admob_app_id">ca-app-pub-2224977611625866~6153956063</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -11,8 +14,8 @@
     <string name="about">About</string>
     <string name="delete_event">Delete event</string>
     <string name="goto_now">Goto now</string>
-    <string name="set_start_time">Set start time</string>
-    <string name="set_end_time">Set end time</string>
+    <string name="set_start_time">Set first hour</string>
+    <string name="set_end_time">Set last hour</string>
     <string name="reset_timetable">Reset timetable</string>
     <string name="apply_template">Apply template</string>
     <string name="grading_system">Grading system</string>

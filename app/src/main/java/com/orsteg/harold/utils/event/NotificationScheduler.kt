@@ -3,26 +3,30 @@ package com.orsteg.harold.utils.event
 import android.app.AlarmManager
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Bundle
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.TaskStackBuilder
+import android.util.Log
 import com.orsteg.harold.activities.MainActivity
 import com.orsteg.harold.database.EventDatabase
-import com.orsteg.harold.utils.app.Preferences
 import com.orsteg.harold.utils.app.TimeConstants
 import java.util.*
 import com.orsteg.harold.R
+import com.orsteg.harold.fragments.EventFragment
+import com.orsteg.harold.receivers.AlarmReceiver
+import com.orsteg.harold.receivers.BootReceiver
 
 /**
  * Created by goodhope on 4/16/18.
  */
 object NotificationScheduler {
 
-    private val CHANNEL_ID = "harold.notifications.id"
 
     fun cancelAllReminders(context: Context) {
 
@@ -44,6 +48,7 @@ object NotificationScheduler {
                     cancelReminder(context, nId)
                 }
                 res.close()
+                database.close()
             }
         }
     }
@@ -65,20 +70,21 @@ object NotificationScheduler {
                     val sqlId = res.getInt(0)
                     val courseId = res.getInt(1)
                     val venue = res.getString(2)
-                    val lecturer = res.getString(3)
-                    val startTime = res.getInt(4)
-                    val endTime = res.getInt(5)
+                    val startTime = res.getInt(3)
+                    val endTime = res.getInt(4)
 
-                    val event = Event(context, sqlId, courseId, TimeConstants.DAYS[i], j, venue, lecturer, startTime, endTime)
-/*
+                    val event = Event(context, sqlId, courseId, TimeConstants.DAYS[i], j, venue, startTime, endTime)
 
-                    val intent = Intent(context, alarmReceiver)
+
+                    val intent = Intent(context, AlarmReceiver::class.java)
 
                     intent.putExtras(event.getBundle())
 
                     setReminder(context, event.startTime, event.endTime, event.notificationId, intent)
-  */              }
+                }
                 res.close()
+                database.close()
+
             }
 
         }
@@ -88,54 +94,65 @@ object NotificationScheduler {
 
         val calendar = Calendar.getInstance()
 
-        val dayOfWeek = intent.extras?.getInt(Event.DAY_INDEX) ?: return
+        val dayofWeek = intent.extras?.getInt(Event.DAY_INDEX)?: return
 
-        val date = TimeConstants.getStartOfDay(calendar.clone() as Calendar)
+        val cdate = calendar.time
+        val date = calendar.time
+        date.hours = 0
+        date.minutes = 0
+        date.seconds = 0
 
-        val cDay = calendar.get(Calendar.DAY_OF_WEEK).toLong()
 
-        val dayDiff = (dayOfWeek - cDay) * TimeConstants.DAY
+        val cday = calendar.get(Calendar.DAY_OF_WEEK).toLong()
 
-        val date1 = calendar.clone() as Calendar
-        date1.timeInMillis = date.timeInMillis + dayDiff + start.toLong()
+        val daydiff = (dayofWeek - cday) * TimeConstants.DAY
 
-        val date2 = calendar.clone() as Calendar
-        date2.timeInMillis = date.timeInMillis + dayDiff + end.toLong()
+        var date1 = Date(date.time + daydiff + start.toLong())
+
+        val date2 = Date(date.time + daydiff + end.toLong())
 
         // cancel already scheduled reminders
         cancelReminder(context, Id)
 
-        if (date2.before(calendar.time))
-            date1.timeInMillis = date.timeInMillis + dayDiff + TimeConstants.WEEK + start.toLong()
+        if (date2.before(cdate))
+            date1 = Date(date.time + daydiff + TimeConstants.WEEK + start.toLong())
 
         // Enable a receiver
 
-        //val receiver = ComponentName(context, bootReceiver)
-        //val pm = context.packageManager
+        val receiver = ComponentName(context, BootReceiver::class.java)
+        val pm = context.packageManager
 
-        //pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-        //        PackageManager.DONT_KILL_APP)
+        pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP)
 
-        val pIntent = PendingIntent.getBroadcast(context, Id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pintent = PendingIntent.getBroadcast(context, Id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
 
-        val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager?
 
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, date1.timeInMillis, AlarmManager.INTERVAL_DAY * 7, pIntent)
+        alarm?.setRepeating(AlarmManager.RTC_WAKEUP, date1.time, AlarmManager.INTERVAL_DAY * 7, pintent)
 
     }
 
     fun cancelReminder(context: Context, Id: Int) {
         // Disable a receiver
+        val inactive = TimeConstants.DAYS.none { Event.eventCount(context, it) > 0 }
 
-        /*
-        val intent1 = Intent(context, alarmReceiver)
+        if (inactive) {
+            val receiver = ComponentName(context, BootReceiver::class.java)
+            val pm = context.packageManager
+
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP)
+        }
+
+        val intent1 = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(context, Id, intent1, PendingIntent.FLAG_UPDATE_CURRENT)
-        val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        am.cancel(pendingIntent)
+        val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager?
+        am?.cancel(pendingIntent)
         pendingIntent.cancel()
 
-        */
     }
 
     fun showNotification(context: Context, id: Int, e: Bundle) {
@@ -153,18 +170,17 @@ object NotificationScheduler {
 
         val builder = NotificationCompat.Builder(context)
 
-
         val notification = builder.setContentTitle(e.getString(Event.C_CODE))
-                .setContentText(e.getString(Event.C_TITLE) + " at " + e.getString(Event.VENUE))
+                .setContentText("${e.getString(Event.C_TITLE)} at ${e.getString(Event.VENUE)}")
                 .setAutoCancel(true)
                 .setSound(alarmSound)
-                //.setSubText("Lecture Started" + " Ends " + EventFragment.timeTOString(e.getInt(Event.END_TIME).toLong()))
+                .setSubText("Lecture Started" + " Ends " + EventFragment.timeTOString(e.getInt(Event.END_TIME).toLong()))
                 .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.icon_filled))
                 .setSmallIcon(R.drawable.ic_event_black_24dp)
                 .setContentIntent(pendingIntent).build()
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(id, notification)
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
+        notificationManager?.notify(id, notification)
 
     }
 

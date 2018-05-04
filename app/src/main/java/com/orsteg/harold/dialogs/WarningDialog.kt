@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.warning_layout.*
 class WarningDialog(context: Context, private val messageTxt: String, private val onYes: () -> Unit) : Dialog(context) {
 
 
-    override fun onCreate(savedInstanceState: Bundle) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.warning_layout)

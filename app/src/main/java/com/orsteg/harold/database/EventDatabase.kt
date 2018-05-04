@@ -16,7 +16,7 @@ class EventDatabase(private val context: Context, private val day: String) : SQL
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("CREATE TABLE $day (ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "$COL_2 INTEGER, $COL_3 TEXT, $COL_4 TEXT, $COL_5 INTEGER, $COL_6 INTEGER)")
+                "$COL_2 INTEGER, $COL_3 TEXT, $COL_4 INTEGER, $COL_5 INTEGER)")
 
     }
 
@@ -28,15 +28,14 @@ class EventDatabase(private val context: Context, private val day: String) : SQL
 
     fun getAllData() = writableDatabase.rawQuery("Select * from $day", null)
 
-    fun insertEvent(courseId: Int, venue: String, lecturer: String, startTime: Int, endTime: Int): Long {
+    fun insertEvent(courseId: Int, venue: String, startTime: Int, endTime: Int): Long {
 
         val content = ContentValues()
 
         content.put(COL_2, courseId)
         content.put(COL_3, venue)
-        content.put(COL_4, lecturer)
-        content.put(COL_5, startTime)
-        content.put(COL_6, endTime)
+        content.put(COL_4, startTime)
+        content.put(COL_5, endTime)
 
         val l = writableDatabase.insert(day, null, content)
 
@@ -56,7 +55,7 @@ class EventDatabase(private val context: Context, private val day: String) : SQL
             res.moveToPosition(i)
 
             if (res.getInt(0) == id) {
-                return arrayOf(res.getInt(0), res.getInt(1), res.getString(2), res.getString(3), res.getInt(4), res.getInt(5), i + 1)
+                return arrayOf(res.getInt(0), res.getInt(1), res.getString(2),  res.getInt(3), res.getInt(4), i + 1)
             }
 
         }
@@ -67,14 +66,13 @@ class EventDatabase(private val context: Context, private val day: String) : SQL
     }
 
 
-    fun updateEventData(id: Int, courseId: Int, venue: String, lecturer: String, startTime: Int, endTime: Int) {
+    fun updateEventData(id: Int, courseId: Int, venue: String, startTime: Int, endTime: Int) {
 
         val content = ContentValues()
         content.put(COL_2, courseId)
         content.put(COL_3, venue)
-        content.put(COL_4, lecturer)
-        content.put(COL_5, startTime)
-        content.put(COL_6, endTime)
+        content.put(COL_4, startTime)
+        content.put(COL_5, endTime)
 
         writableDatabase.update(day, content, "ID=?", arrayOf(id.toString()))
 
@@ -83,8 +81,8 @@ class EventDatabase(private val context: Context, private val day: String) : SQL
     fun updateEventTime(id: Int, startTime: Int, endTime: Int) {
 
         val content = ContentValues()
-        content.put(COL_5, startTime)
-        content.put(COL_6, endTime)
+        content.put(COL_4, startTime)
+        content.put(COL_5, endTime)
 
         writableDatabase.update(day, content, "ID=?", arrayOf(id.toString()))
 
@@ -110,8 +108,7 @@ class EventDatabase(private val context: Context, private val day: String) : SQL
     companion object {
         private val COL_2 = "COURSE_ID"
         private val COL_3 = "VENUE"
-        private val COL_4 = "LECTURER"
-        private val COL_5 = "START_TIME"
-        private val COL_6 = "END_TIME"
+        private val COL_4 = "START_TIME"
+        private val COL_5 = "END_TIME"
     }
 }

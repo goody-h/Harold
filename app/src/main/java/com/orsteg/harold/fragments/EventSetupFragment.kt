@@ -8,11 +8,13 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.Toast
+import android.widget.*
 
 import com.orsteg.harold.R
+import com.orsteg.harold.database.ResultDataBase
 import com.orsteg.harold.utils.app.Preferences
+import com.orsteg.harold.utils.result.Semester
+import kotlinx.android.synthetic.main.set_course_dialog_layout.*
 
 
 /**
@@ -45,6 +47,7 @@ class EventSetupFragment : BaseFragment() {
     private var mParam1: String? = null
     private var mParam2: String? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
@@ -60,6 +63,46 @@ class EventSetupFragment : BaseFragment() {
         if (!isHidden) mListener?.hideActionBtn()
 
         return inflater.inflate(R.layout.fragment_event_setup, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val currsem = view.findViewById<View>(R.id.currSembtn)
+
+        val levels = view.findViewById<Spinner>(R.id.levels)
+
+        val semes = view.findViewById<Spinner>(R.id.semes)
+
+
+        val l = context!!.resources.getStringArray(R.array.levels)
+        val lel = (0 until l.size ) .mapTo(ArrayList<String>()) { l[it] }
+
+        val s = context!!.resources.getStringArray(R.array.semes)
+        val sems = (0 until s.size ) .mapTo(ArrayList<String>()) { s[it] }
+
+        levels.adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_spinner_dropdown_item, lel)
+
+        semes.adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_spinner_dropdown_item, sems)
+
+        currsem.setOnClickListener {
+            val level = (levels.selectedItemPosition + 1) * 1000
+            val sem = (semes.selectedItemPosition + 1) * 100
+            val semId = level + sem
+
+            mPreferences.mEditor.putBoolean("harold.event.setup", true).putInt("event.semester.current", semId).commit()
+
+
+            val count = Semester.courseCount(context!!, semId)
+            if (count == 0) {
+                val helper = ResultDataBase(context!!, semId)
+                helper.onUpgrade(helper.writableDatabase, 1, 1)
+            }
+
+            mListener?.resetGroup(1)
+        }
+
+
     }
 
     companion object {

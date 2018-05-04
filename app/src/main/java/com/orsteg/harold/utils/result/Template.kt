@@ -36,7 +36,7 @@ class TemplateManager (temp: Template, val id: String, val iAction: String) : Te
     var isOwner = false
 
     init {
-        isOwner = FirebaseAuth.getInstance().currentUser?.uid.equals(id)
+        isOwner = FirebaseAuth.getInstance().currentUser?.uid.equals(ownerId)
     }
 
     fun saveState(bundle: Bundle){

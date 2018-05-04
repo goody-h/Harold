@@ -24,19 +24,19 @@ interface ChildListener: ChildEventListener{
 
     }
 
-    override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
+    override fun onChildMoved(dataSnapshot: DataSnapshot?, s: String?) {
 
     }
 
-    override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
+    override fun onChildChanged(dataSnapshot: DataSnapshot?, s: String?) {
 
     }
 
-    override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
+    override fun onChildAdded(dataSnapshot: DataSnapshot?, s: String?) {
 
     }
 
-    override fun onChildRemoved(p0: DataSnapshot?) {
+    override fun onChildRemoved(dataSnapshot: DataSnapshot?) {
 
     }
 

@@ -16,4 +16,4 @@ class EdData() {
     var count = 0
 }
 
-class EdRequest(userId: String, institution: String, department: String, status: Boolean = false)
+class EdRequest(val userId: String, val institution: String, val department: String, val status: Boolean = false)

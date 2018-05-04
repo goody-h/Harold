@@ -22,6 +22,7 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="Harold"
+        android:textColor="@color/black"
         android:textSize="24sp" />
 
     <FrameLayout
@@ -65,7 +66,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="30dp">
 
                 <TextView
                     android:id="@+id/textView22"

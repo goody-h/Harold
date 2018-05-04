@@ -25,6 +25,14 @@
         android:layout_height="3dp"
         android:background="@drawable/top_shadow" />
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-3940256099942544/630078111"></com.google.android.gms.ads.AdView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -80,29 +88,31 @@
                 android:id="@+id/reset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/border_filled"
-                android:minHeight="20dp"
+                android:minHeight="35dp"
                 android:text="Reset" />
 
             <Button
                 android:id="@+id/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/border_filled"
-                android:minHeight="20dp"
-                android:text="Cancel" />
+                android:minHeight="35dp"
+                android:text="Finish" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="55dp"
+            android:layout_marginBottom="60dp"
             android:orientation="horizontal"
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
@@ -159,7 +169,7 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="55dp"
+            android:layout_marginBottom="60dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
 

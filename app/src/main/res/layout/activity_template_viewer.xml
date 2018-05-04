@@ -26,6 +26,15 @@
 
         </android.support.v7.widget.Toolbar>
 
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-3940256099942544/630078111"></com.google.android.gms.ads.AdView>
+
     </android.support.design.widget.AppBarLayout>
 
 

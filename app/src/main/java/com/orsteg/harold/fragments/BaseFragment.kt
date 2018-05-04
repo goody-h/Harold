@@ -25,12 +25,7 @@ abstract class BaseFragment : Fragment() {
 
 
     protected var mListener: OnFragmentInteractionListener? = null
-    protected var mPreferences: Preferences? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mPreferences = Preferences(context!!, mPrefType)
-    }
+    protected val mPreferences: Preferences by lazy { Preferences(context!!, mPrefType) }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -69,7 +64,7 @@ abstract class BaseFragment : Fragment() {
 
         fun shoWActionBtn(listener: View.OnClickListener?)
 
-        fun setActionBtn(resId: Int, listener: (View) -> Unit)
+        fun setActionBtn(resId: Int, listener: View.OnClickListener?)
 
         fun hideTabs()
 
@@ -81,7 +76,7 @@ abstract class BaseFragment : Fragment() {
 
         fun showWarning(message: String, action: () -> Unit)
 
-        fun showLoader(message: String, cancelable: Boolean = true): Dialog
+        fun showLoader(message: String, cancelable: Boolean = true): Dialog?
 
         fun getTools(stubIds: Array<Int>): ArrayList<ViewStub>
 

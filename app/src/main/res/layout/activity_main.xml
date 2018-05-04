@@ -55,14 +55,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <ViewStub
-            android:id="@+id/homeTool_inflater"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inflatedId="@+id/homeTool"
-            android:layout="@layout/home_tool" />
-
-
 
     </android.support.design.widget.AppBarLayout>
 
@@ -113,11 +105,6 @@
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <android.support.design.widget.TabItem
-                android:id="@+id/tabItem4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

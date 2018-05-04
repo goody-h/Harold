@@ -16,14 +16,4 @@ object TimeConstants {
 
     fun getTime() = Calendar.getInstance().timeInMillis
 
-    fun getStartOfDay(c: Calendar = Calendar.getInstance()): Calendar {
-
-        c.set(Calendar.HOUR, 0)
-        c.set(Calendar.MINUTE, 0)
-        c.set(Calendar.SECOND, 0)
-        c.set(Calendar.MILLISECOND, 0)
-
-        return c
-    }
-
 }

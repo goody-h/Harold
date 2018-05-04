@@ -17,7 +17,7 @@ class LoaderDialog(context: Context, private val cancelable: Boolean = false) : 
         setCancelable(false)
     }
 
-    override fun onCreate(savedInstanceState: Bundle) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.loader_layout)

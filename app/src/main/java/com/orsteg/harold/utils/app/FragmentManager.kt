@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
 import com.orsteg.harold.fragments.*
+import com.orsteg.harold.utils.event.NotificationScheduler
 import com.orsteg.harold.utils.user.AppUser
 
 /**
@@ -25,10 +26,11 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
     private var initPosition = 0
 
-    private var mGroups = arrayOf(HomeGroup(mFragmentManager),
+    private var mGroups = arrayOf(
             ResultGroup(mFragmentManager),
             EventGroup(context, mFragmentManager),
-            ProfileGroup(mFragmentManager))
+            ProfileGroup(mFragmentManager)
+            )
 
     private var mHistory = ArrayList<Int>()
 
@@ -157,10 +159,6 @@ class FragmentManager(context: Context, private val parent: View, private var ta
         }
     }
 
-    companion object {
-        val TAG = "THISTAG"
-    }
-
     interface OnFragmentManagerListener {
 
         var mUser: AppUser?
@@ -171,28 +169,6 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
         fun setToolbarTitle(title: String)
 
-    }
-
-    class HomeGroup(mFragmentManager: FragmentManager): FragmentGroup(mFragmentManager) {
-
-        override val title: String = "Home"
-
-        init {
-            fragTag = "com.harold.fragment.home"
-        }
-
-        override fun getFragment(reset: Boolean): BaseFragment {
-
-            var fragment = getCurrentFragment()
-            if (fragment == null) {
-                fragment = HomeFragment.newInstance()
-                newFrag = true
-            } else {
-                newFrag = false
-            }
-
-            return fragment
-        }
     }
 
     class ResultGroup(mFragmentManager: FragmentManager): FragmentGroup(mFragmentManager) {
@@ -225,6 +201,14 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
         private var pref = Preferences(context, Preferences.EVENT_PREFERENCES)
 
+        init {
+            val setup = pref.mPrefs.getBoolean("harold.event.setup", false)
+
+            if (setup){
+                Thread { NotificationScheduler.setAllReminders(context)}.start()
+            }
+        }
+
         override fun getFragment(reset: Boolean): BaseFragment {
 
             val setup = pref.mPrefs.getBoolean("harold.event.setup", false)
@@ -235,7 +219,7 @@ class FragmentManager(context: Context, private val parent: View, private var ta
                 fragTag = tags[0]
                 var mFrag = mFragmentManager.findFragmentByTag(fragTag)
                 if (mFrag == null) {
-                    mFrag = EventFragment.newInstance("", "")
+                    mFrag = EventFragment.newInstance(0, "")
                     newFrag = true
                 } else {
                     newFrag = false

@@ -10,25 +10,33 @@ import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.view.*
 import android.widget.ImageView
+import com.cocosw.bottomsheet.BottomSheet
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.orsteg.harold.R
+import com.orsteg.harold.dialogs.UpdateDialog
+import com.orsteg.harold.dialogs.WarningDialog
 import com.orsteg.harold.fragments.BaseFragment
 import com.orsteg.harold.utils.app.FragmentManager
 import com.orsteg.harold.utils.app.Preferences
+import com.orsteg.harold.utils.app.TimeConstants
 import com.orsteg.harold.utils.firebase.References
 import com.orsteg.harold.utils.firebase.ValueListener
 import com.orsteg.harold.utils.user.AppUser
 import com.orsteg.harold.utils.user.User
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionListener, FragmentManager.OnFragmentManagerListener {
 
@@ -43,10 +51,17 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     private var mAuthListener: FirebaseAuth.AuthStateListener? = null
     private var mUserListener: ValueListener? = null
 
-    private var mTabIconsSelected = arrayOf(R.drawable.ic_home_black_24dp,
+    private var mTabIconsSelected = arrayOf(
             R.drawable.ic_school_black_24dp,
             R.drawable.ic_date_range_black_24dp,
-            R.drawable.ic_person_black_24dp)
+            R.drawable.ic_person_black_24dp
+    )
+
+
+    private var sheet: BottomSheet? = null
+
+    private val mRand = Random()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +70,10 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         setContentView(R.layout.activity_main)
 
         val prefs = Preferences(this)
+        FirebaseRemoteConfig.getInstance().setDefaults(R.xml.remote_config_defaults)
+
+        MobileAds.initialize(this, resources.getString(R.string.admob_app_id))
+
 
         mUser = AppUser.getPersistentUser(this)
         authState = prefs.mPrefs.getBoolean("user.hasState", false)
@@ -83,7 +102,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
                 // Set Activity Parameters
                 if (!authState) {
                     authState = true
-                    resetGroup(3)
+                    resetGroup(2)
                 }
                 authState = true
 
@@ -99,7 +118,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
                 if (authState) {
                     authState = false
-                    resetGroup(3)
+                    resetGroup(2)
                     mUserRef?.removeEventListener(mUserListener)
                     mUserRef = null
                     mUserListener = null
@@ -111,11 +130,18 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
         mFragmentManager?.initFragment()
 
-        showIntro()
+        FirebaseRemoteConfig.getInstance().fetch(TimeConstants.DAY/1000)
+
+        checkVersion()
     }
 
-    private fun showIntro(){
+    private fun checkVersion(){
+        val new = FirebaseRemoteConfig.getInstance().getLong("version")
+        val current = resources.getString(R.string.version).toLong()
 
+        if (current < new && mRand.nextInt(100) < 60){
+            UpdateDialog(this).show()
+        }
     }
 
     private fun getCurrentUser(user: FirebaseUser?) {
@@ -142,13 +168,13 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
                             mUser = nUser
                             mUser?.persistUser(this@MainActivity)
 
-                            resetGroup(3)
+                            resetGroup(2)
                         } else if (mUser?.updateUser(nUser) == true){
 
                             mUser = nUser
                             mUser?.persistUser(this@MainActivity)
 
-                            refreshFragment(3)
+                            refreshFragment(2)
 
                         }
                     } else {
@@ -157,7 +183,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
                         authState = false
                         mUser = null
-                        resetGroup(3)
+                        resetGroup(2)
 
                     }
                 }
@@ -168,7 +194,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     }
 
     private fun initTabs(){
-            for (i in 0..3) {
+            for (i in 0..2) {
                 val tab = bottomTab.getTabAt(i)
                 if (tab != null)
                     tab.customView = getTabView(i)
@@ -208,9 +234,11 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         val id = item?.itemId
 
         when (id) {
-            R.id.action_settings -> return true
             R.id.action_help -> {
-
+                val intent = Intent(Intent.ACTION_VIEW)
+                val url = FirebaseRemoteConfig.getInstance().getString("help_site")
+                intent.data = Uri.parse(url)
+                startActivity(intent)
             }
             R.id.action_about -> {
                 val intent = Intent(this, AboutActivity::class.java)
@@ -237,8 +265,9 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
     }
 
-    override fun onCreateDialog(id: Int): Dialog {
-        return super.onCreateDialog(id)
+    override fun onCreateDialog(id: Int): Dialog? {
+
+        return sheet
     }
 
     override fun resetGroup(which: Int) {
@@ -255,7 +284,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     }
 
 
-    override fun setActionBtn(resId: Int, listener: (View) -> Unit) {
+    override fun setActionBtn(resId: Int, listener: View.OnClickListener?) {
         actionBtn.setImageResource(resId)
         actionBtn.setOnClickListener(listener)
     }
@@ -277,7 +306,8 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     }
 
     override fun showBottomSheet(menuId: Int, listener: (DialogInterface, Int) -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        sheet = BottomSheet.Builder(this).sheet(menuId).listener(listener).grid().build()
+        showDialog(menuId)
     }
 
     override fun showSnackBar(message: String, action: String, listener: (View) -> Unit) {
@@ -288,11 +318,12 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
     }
 
     override fun showWarning(message: String, action: () -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        WarningDialog(this, message, action).show()
     }
 
-    override fun showLoader(message: String, cancelable: Boolean): Dialog {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun showLoader(message: String, cancelable: Boolean): Dialog? {
+
+        return null
     }
 
     override fun setToolbarTitle(title: String) {

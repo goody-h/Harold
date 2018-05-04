@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     tools:context="com.orsteg.harold.fragments.EventFragment" >
 
-    <!--com.orsteg.weekview.WeekView
+    <com.alamkanak.weekview.WeekView
         android:id="@+id/weekView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,14 +23,13 @@
         app:noOfVisibleDays="1"
         app:textSize="12sp"
         app:todayBackgroundColor="#1848adff"
-        app:todayHeaderTextColor="@color/colorAccent" /-->
+        app:todayHeaderTextColor="@color/colorAccent" />
 
     <RelativeLayout
         android:id="@+id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/textView36"
