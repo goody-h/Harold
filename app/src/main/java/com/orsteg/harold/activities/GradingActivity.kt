@@ -52,7 +52,7 @@ class GradingActivity : AppCompatActivity() {
 
         val b = system.gradeStates
 
-        val gs = (0..17).mapTo(ArrayList<Grading>()) { Grading(this, g[it], gp[it], b[it]) }
+        val gs = (0..18).mapTo(ArrayList<Grading>()) { Grading(this, g[it], gp[it], b[it]) }
 
         val adapter = GradingAdapter(this, gs)
 
