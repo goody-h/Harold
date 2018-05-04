@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.orsteg.harold.R
 import com.orsteg.harold.activities.*
 import com.orsteg.harold.utils.app.Preferences
+import com.orsteg.harold.utils.firebase.BannerAd
 import com.orsteg.harold.utils.user.AppUser
 import kotlinx.android.synthetic.main.fragment_profile.*
 
@@ -79,6 +80,7 @@ class ProfileFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adView.loadAd(AdRequest.Builder().build())
+        BannerAd.setListener(adView)
 
         val username = view.findViewById<TextView>(R.id.userName)
 

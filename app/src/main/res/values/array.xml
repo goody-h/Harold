@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="levels">
-        <item>LEVEL 100</item>
-        <item>LEVEL 200</item>
-        <item>LEVEL 300</item>
-        <item>LEVEL 400</item>
-        <item>LEVEL 500</item>
-        <item>LEVEL 600</item>
-        <item>LEVEL 700</item>
-        <item>LEVEL 800</item>
-        <item>LEVEL 900</item>
+        <item>LEV 100</item>
+        <item>LEV 200</item>
+        <item>LEV 300</item>
+        <item>LEV 400</item>
+        <item>LEV 500</item>
+        <item>LEV 600</item>
+        <item>LEV 700</item>
+        <item>LEV 800</item>
+        <item>LEV 900</item>
     </string-array>
 
     <string-array name="semes">

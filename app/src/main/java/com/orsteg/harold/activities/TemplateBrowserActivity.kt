@@ -25,6 +25,7 @@ import com.orsteg.harold.dialogs.LoaderDialog
 import com.orsteg.harold.dialogs.PlainDialog
 import com.orsteg.harold.dialogs.WarningDialog
 import com.orsteg.harold.utils.app.AndroidPermissions
+import com.orsteg.harold.utils.firebase.BannerAd
 import com.orsteg.harold.utils.result.FileHandler
 import com.orsteg.harold.utils.user.AppUser
 import kotlinx.android.synthetic.main.activity_template_browser.*
@@ -69,6 +70,7 @@ class TemplateBrowserActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         adView.loadAd(AdRequest.Builder().build())
+        BannerAd.setListener(adView)
 
 
         mUser = AppUser.getPersistentUser(this)

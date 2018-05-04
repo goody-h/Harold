@@ -1,0 +1,6 @@
+<component name="DependencyValidationManager">
+  <state>
+    <unnamed_scope value="lib:*..*" />
+    <unnamed_scope value="src[app]:build" />
+  </state>
+</component>

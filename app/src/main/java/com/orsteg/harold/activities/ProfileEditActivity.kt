@@ -21,10 +21,7 @@ import com.orsteg.harold.R
 import com.orsteg.harold.dialogs.ListDialog
 import com.orsteg.harold.dialogs.PlainDialog
 import com.orsteg.harold.utils.app.Preferences
-import com.orsteg.harold.utils.firebase.EdName
-import com.orsteg.harold.utils.firebase.EdRequest
-import com.orsteg.harold.utils.firebase.References
-import com.orsteg.harold.utils.firebase.ValueListener
+import com.orsteg.harold.utils.firebase.*
 import com.orsteg.harold.utils.user.AppUser
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 import java.util.*
@@ -76,9 +73,11 @@ class ProfileEditActivity : AppCompatActivity() {
         fetchData()
 
         setSupportActionBar(findViewById<View>(R.id.toolbar4) as Toolbar)
-        supportActionBar?.setTitle("Edit Profile")
+        supportActionBar?.title = "Edit Profile"
 
         adView.loadAd(AdRequest.Builder().build())
+
+        BannerAd.setListener(adView)
 
 
         val profile = findViewById<ListView>(R.id.details)
@@ -175,7 +174,7 @@ class ProfileEditActivity : AppCompatActivity() {
                         startPlainDialog("Institution full name", object : PlainDialogClick {
                             override fun onClick(dialog: PlainDialog) {
                                 val `in` = dialog.value?.text.toString()
-                                val request = EdRequest(mAuth?.uid!!, `in`, "", false)
+                                val request = EdRequest(mAuth?.currentUser?.uid!!, `in`, "", false)
                                 val requestInstance = FirebaseDatabase.getInstance().getReference("Requests")
                                 val id = requestInstance.push().key
                                 requestInstance.child(id).setValue(request)
@@ -219,7 +218,7 @@ class ProfileEditActivity : AppCompatActivity() {
                         startPlainDialog("Department full name", object : PlainDialogClick {
                             override fun onClick(dialog: PlainDialog) {
                                 val d = dialog.value?.text.toString()
-                                val request = EdRequest(mAuth?.uid!!, "", d, false)
+                                val request = EdRequest(mAuth?.currentUser?.uid!!, "", d, false)
                                 val requestInstance = FirebaseDatabase.getInstance().getReference("Requests")
                                 val id = requestInstance.push().key
                                 requestInstance.child(id).setValue(request)

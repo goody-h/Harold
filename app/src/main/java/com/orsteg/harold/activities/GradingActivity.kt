@@ -15,6 +15,7 @@ import com.google.android.gms.ads.AdRequest
 import com.orsteg.harold.R
 import com.orsteg.harold.dialogs.PlainDialog
 import com.orsteg.harold.utils.app.Preferences
+import com.orsteg.harold.utils.firebase.BannerAd
 import com.orsteg.harold.utils.result.GradingSystem
 import kotlinx.android.synthetic.main.activity_grading.*
 import java.util.ArrayList
@@ -29,6 +30,7 @@ class GradingActivity : AppCompatActivity() {
         supportActionBar?.title = "Grading System"
 
         adView.loadAd(AdRequest.Builder().build())
+        BannerAd.setListener(adView)
 
         init()
         findViewById<View>(R.id.cancel).setOnClickListener { finish() }

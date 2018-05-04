@@ -33,6 +33,7 @@ import com.orsteg.harold.dialogs.LoaderDialog
 import com.orsteg.harold.dialogs.SaveDialog
 import com.orsteg.harold.utils.app.AndroidPermissions
 import com.orsteg.harold.utils.app.Preferences
+import com.orsteg.harold.utils.firebase.BannerAd
 import com.orsteg.harold.utils.result.*
 import com.orsteg.harold.utils.user.AppUser
 import com.orsteg.harold.utils.user.User
@@ -66,7 +67,6 @@ class TemplateViewerActivity : AppCompatActivity(), DetailsDialog.DetailsDialogI
     private var downloadable = false
 
     private lateinit var mInterstitialAd: InterstitialAd
-    private var mRandom = Random()
 
 
     private val inputStream: InputStream?
@@ -87,7 +87,6 @@ class TemplateViewerActivity : AppCompatActivity(), DetailsDialog.DetailsDialogI
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_template_viewer)
 
-
         // get views
         action = findViewById(R.id.action)
         listView = findViewById(R.id.list)
@@ -98,8 +97,9 @@ class TemplateViewerActivity : AppCompatActivity(), DetailsDialog.DetailsDialogI
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         adView.loadAd(AdRequest.Builder().build())
+        BannerAd.setListener(adView)
         mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = "ca-app=pub-3940256099942544/10331737"
+        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
         mInterstitialAd.loadAd(AdRequest.Builder().build())
 
 
@@ -358,8 +358,7 @@ class TemplateViewerActivity : AppCompatActivity(), DetailsDialog.DetailsDialogI
     }
 
     fun showAd(){
-
-        if (mInterstitialAd.isLoaded && mRandom.nextInt(100) < 50){
+        if (mInterstitialAd.isLoaded){
             mInterstitialAd.show()
         }
     }

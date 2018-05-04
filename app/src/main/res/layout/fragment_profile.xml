@@ -74,6 +74,7 @@
                 android:id="@+id/services"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:layout_marginBottom="5dp"
                 android:scrollbars="none" />
 
             <com.google.android.gms.ads.AdView
@@ -81,8 +82,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:visibility="gone"
                 app:adSize="BANNER"
-                app:adUnitId="ca-app-pub-3940256099942544/630078111"></com.google.android.gms.ads.AdView>
+                app:adUnitId="ca-app-pub-3940256099942544/6300978111"/>
 
             <TextView
                 android:id="@+id/textView32"

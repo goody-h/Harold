@@ -16,6 +16,7 @@ import com.orsteg.harold.dialogs.DetailsDialog
 import com.orsteg.harold.fragments.BaseDownloadFragment
 import com.orsteg.harold.fragments.TemplateFragment
 import com.orsteg.harold.fragments.TemplateLevelFragment
+import com.orsteg.harold.utils.firebase.BannerAd
 import com.orsteg.harold.utils.user.AppUser
 import kotlinx.android.synthetic.main.activity_download.*
 
@@ -58,6 +59,8 @@ class DownloadActivity : AppCompatActivity(), DetailsDialog.DetailsDialogInterfa
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         adView.loadAd(AdRequest.Builder().build())
+
+        BannerAd.setListener(adView)
 
         others = findViewById(R.id.others)
         ins = findViewById(R.id.institution)

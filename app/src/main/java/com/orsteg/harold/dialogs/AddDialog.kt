@@ -21,7 +21,7 @@ import kotlin.collections.ArrayList
  */
 class AddDialog(context: Context, private var id: Int, private val staticId: Boolean,
                 private val new: Boolean, private val course: Course? = null,
-                private val onSuccess: (Int, Double) -> Unit ) : Dialog(context) {
+                private val onSuccess: (Int, Double, Course?) -> Unit ) : Dialog(context) {
 
     private var ss = ""
 
@@ -124,13 +124,13 @@ class AddDialog(context: Context, private var id: Int, private val staticId: Boo
             add.setOnClickListener({
                 createNew()
                 dismiss()
-                onSuccess(id, cu.text.toString().toDouble())
+                onSuccess(id, cu.text.toString().toDouble(), course)
             })
         } else {
             add.setOnClickListener({
                 update()
                 dismiss()
-                onSuccess(id, cu.text.toString().toDouble())
+                onSuccess(id, cu.text.toString().toDouble(), course)
             })
         }
 

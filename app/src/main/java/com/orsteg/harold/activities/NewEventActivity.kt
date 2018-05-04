@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.*
+import com.google.android.gms.ads.AdRequest
 import com.orsteg.harold.R
 import com.orsteg.harold.database.EventDatabase
 import com.orsteg.harold.database.ResultDataBase
@@ -16,7 +17,9 @@ import com.orsteg.harold.receivers.AlarmReceiver
 import com.orsteg.harold.utils.app.Preferences
 import com.orsteg.harold.utils.event.Event
 import com.orsteg.harold.utils.event.NotificationScheduler
+import com.orsteg.harold.utils.firebase.BannerAd
 import com.orsteg.harold.utils.result.Semester
+import kotlinx.android.synthetic.main.activity_new_event.*
 import java.util.ArrayList
 
 class NewEventActivity : AppCompatActivity() {
@@ -55,6 +58,10 @@ class NewEventActivity : AppCompatActivity() {
 
         setSupportActionBar(findViewById<View>(R.id.toolbar3) as Toolbar)
         supportActionBar?.title = "Create New Event"
+
+        adView.loadAd(AdRequest.Builder().build())
+
+        BannerAd.setListener(adView)
 
         startBtn = findViewById(R.id.startBtn)
         endBtn = findViewById(R.id.endBtn)
@@ -277,7 +284,7 @@ class NewEventActivity : AppCompatActivity() {
 
     private fun addNew(currSem: Int) {
 
-        AddDialog(this, currSem, true, true){_, _ ->
+        AddDialog(this, currSem, true, true){_, _, _ ->
             initCourseList(adapt1?.count!! - 2)
         }.show()
     }

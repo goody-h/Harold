@@ -252,7 +252,7 @@ class ResultFragment : BaseFragment() {
 
     private fun newCourse() {
 
-        AddDialog(context!!, Semester_Id, false, true){ semId, _ ->
+        AddDialog(context!!, Semester_Id, false, true){ semId, _, _ ->
             var curr = false
             val sem = currSem
             val l = mPreferences.mPrefs.getString("result.level.current.text", "LEVEL")
@@ -595,17 +595,25 @@ class ResultFragment : BaseFragment() {
             }
             edit.setOnClickListener {
 
-                AddDialog(context,  sem_Id, true, false, template[position]){ _, cu ->
+                val unit = template[position].cu
 
+                AddDialog(context,  sem_Id, true, false, template[position]){ _, cu, course ->
 
                     val s =
                             if (cu % 1 == 0.0) cu.toInt().toString() 
                             else cu.toString() 
 
                     Cunit.text = s
+
+                    if (course != null)
+                    template[position] = course
+
+                    EditTCU(TCU - unit + cu)
+
+                    notifyDataSetChanged()
                     _gpacalc()
                     _cgpacalc()
-                    notifyDataSetChanged()
+
                 }.show()
 
             }
@@ -816,7 +824,7 @@ class ResultFragment : BaseFragment() {
 
         if (this % 1 == 0.0) return this.toInt().toString()
 
-        if (d + 2 < this.toString().length) return this.toString()
+        if (d + 4 > this.toString().length) return this.toString()
 
         return this.toString().substring(0..d+2)
     }
@@ -826,7 +834,7 @@ class ResultFragment : BaseFragment() {
 
         if (this % 1 == 0f) return this.toInt().toString()
 
-        if (d + 2 < this.toString().length) return this.toString()
+        if (d + 4 > this.toString().length) return this.toString()
 
         return this.toString().substring(0..d+2)
     }
