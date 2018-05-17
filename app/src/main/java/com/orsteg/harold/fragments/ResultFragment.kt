@@ -313,6 +313,8 @@ class ResultFragment : BaseFragment() {
 
         if (levels.size != 0) {
 
+            semNav?.findViewById<View>(R.id.nav)?.visibility = View.VISIBLE
+
             val adapt1 = spinAdapt1(context!!, levels, num)
 
 
@@ -367,6 +369,9 @@ class ResultFragment : BaseFragment() {
             l.add("LEVEL")
             val s = ArrayList<String>()
             s.add("SEM")
+
+            semNav?.findViewById<View>(R.id.nav)?.visibility = View.GONE
+
 
             spin1?.onItemSelectedListener = null
             spin2?.onItemSelectedListener = null

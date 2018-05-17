@@ -147,15 +147,10 @@ class FileHandler {
             }
 
 
-            if (targets.length() != 0) {
-                result.put("courses", targets)
-                result.put("validity", true)
-                result.put("message", "")
+            result.put("courses", targets)
+            result.put("validity", true)
+            result.put("message", "")
 
-            } else {
-                result.put("validity", false)
-                result.put("message", "")
-            }
         } catch (e: JSONException){
             result.put("validity", false)
             result.put("message", "")

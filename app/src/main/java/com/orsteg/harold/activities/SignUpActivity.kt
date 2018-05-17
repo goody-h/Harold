@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.orsteg.harold.R
 import com.orsteg.harold.utils.firebase.EdName
 import com.orsteg.harold.utils.firebase.EdRequest
+import com.orsteg.harold.utils.firebase.References
 import com.orsteg.harold.utils.firebase.ValueListener
 import com.orsteg.harold.utils.user.User
 import kotlinx.android.synthetic.main.activity_signup.*
@@ -274,23 +275,20 @@ class SignUpActivity : AppCompatActivity() {
             Toast.makeText(this, "Sign up failed: Passwords do not match", Toast.LENGTH_SHORT).show()
             return
         }
-        var chat = true
 
         mail = email?.text.toString()
         password = pass?.text.toString()
 
         if (inst?.visibility == View.VISIBLE) {
-            chat = false
             instt = inst?.text.toString()
             request = true
         }
         if (dept?.visibility == View.VISIBLE) {
-            chat = false
             deptt = dept?.text.toString()
             request = true
         }
 
-        val Chat = chat
+        val Chat = true
 
         username = uname?.text.toString()
 
@@ -318,10 +316,10 @@ class SignUpActivity : AppCompatActivity() {
                                 requestInstance?.child(id)?.setValue(request)
                             }
                             if (inst?.visibility == View.VISIBLE) {
-                                instt = "N/A"
+                                References.INSTITUTION_LIST.child(instt.replace("\\s+".toRegex(), "_")).setValue(EdName(instt))
                             }
                             if (dept?.visibility == View.VISIBLE) {
-                                deptt = "N/A"
+                                References.DEPARTMENT_LIST.child(deptt.replace("\\s+".toRegex(), "_")).setValue(EdName(deptt))
                             }
 
                             val user = User(username, deptt, instt, Chat)
