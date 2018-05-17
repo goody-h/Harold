@@ -1,5 +1,6 @@
 package com.orsteg.harold.activities
 
+import android.app.Activity
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -126,9 +127,14 @@ class NewEventActivity : AppCompatActivity() {
         ok?.setOnClickListener {
             val count = Event.eventCount(this, Day)
 
-            val t = Event(context, 0, time[2] as Int, Day,count + 1, venue?.text.toString(), Start, end)
+            val t = Event(context, 0, time[2] as Int , Day,count + 1, venue?.text.toString(), Start, end)
             t.addEvent()
             setAlarm(t)
+
+            val result = Intent()
+            result.putExtra(Event.DAY_INDEX, Nday)
+            result.putExtra(Event.START_TIME, Start)
+            setResult(Activity.RESULT_OK, result)
             finish()
         }
 
@@ -235,7 +241,8 @@ class NewEventActivity : AppCompatActivity() {
 
         code?.adapter = adapt1
 
-        code?.setSelection(select)
+        if (select != -1) code?.setSelection(select)
+        else code?.setSelection(adapt1!!.count - 2)
     }
 
     private fun initiateTime() {
@@ -285,7 +292,7 @@ class NewEventActivity : AppCompatActivity() {
     private fun addNew(currSem: Int) {
 
         AddDialog(this, currSem, true, true){_, _, _ ->
-            initCourseList(adapt1?.count!! - 2)
+            initCourseList(-1)
         }.show()
     }
 

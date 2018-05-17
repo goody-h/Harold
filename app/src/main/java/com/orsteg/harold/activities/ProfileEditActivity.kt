@@ -178,8 +178,25 @@ class ProfileEditActivity : AppCompatActivity() {
                                 val requestInstance = FirebaseDatabase.getInstance().getReference("Requests")
                                 val id = requestInstance.push().key
                                 requestInstance.child(id).setValue(request)
+                                References.INSTITUTION_LIST.child(`in`.replace("\\s+".toRegex(), "_")).setValue(EdName(`in`))
+
+                                mUserDatabase?.child("institution")?.setValue(`in`)
+                                        ?.addOnSuccessListener {
+                                            val t = Calendar.getInstance().timeInMillis
+                                            mUserDatabase?.child("lastUpdate")?.setValue(t)
+                                            mUser?.institution = `in`
+                                            mUser?.lastUpdate = t
+                                            ((findViewById<View>(R.id.details) as ListView).adapter as ListAdapter).items[2].value = `in`
+                                            runOnUiThread {
+                                                setLastUpdate()
+                                                ((findViewById<View>(R.id.details) as ListView).adapter as ListAdapter).notifyDataSetChanged()
+                                            }
+                                            Toast.makeText(context, "Institution updated", Toast.LENGTH_SHORT).show()
+                                        }
+                                        ?.addOnFailureListener { Toast.makeText(context, "Institution not set: Connection error", Toast.LENGTH_SHORT).show() }
+                                Toast.makeText(context, "Updating institution", Toast.LENGTH_SHORT).show()
+
                                 dialog.dismiss()
-                                Toast.makeText(context, "Institution requested", Toast.LENGTH_SHORT).show()
                             }
                         }, "")
                         return@ListDialog
@@ -222,8 +239,26 @@ class ProfileEditActivity : AppCompatActivity() {
                                 val requestInstance = FirebaseDatabase.getInstance().getReference("Requests")
                                 val id = requestInstance.push().key
                                 requestInstance.child(id).setValue(request)
+
+                                References.DEPARTMENT_LIST.child(d.replace("\\s+".toRegex(), "_")).setValue(EdName(d))
+
+                                mUserDatabase?.child("department")?.setValue(d)
+                                        ?.addOnSuccessListener {
+                                            val t = Calendar.getInstance().timeInMillis
+                                            mUserDatabase?.child("lastUpdate")?.setValue(t)
+                                            mUser?.department = d
+                                            mUser?.lastUpdate = t
+                                            ((findViewById<View>(R.id.details) as ListView).adapter as ListAdapter).items[3].value = d
+                                            runOnUiThread {
+                                                setLastUpdate()
+                                                ((findViewById<View>(R.id.details) as ListView).adapter as ListAdapter).notifyDataSetChanged()
+                                            }
+                                            Toast.makeText(context, "Department updated", Toast.LENGTH_SHORT).show()
+                                        }
+                                        ?.addOnFailureListener { Toast.makeText(context, "Department not set: Connection error", Toast.LENGTH_SHORT).show() }
+                                Toast.makeText(context, "Updating department", Toast.LENGTH_SHORT).show()
+
                                 dialog.dismiss()
-                                Toast.makeText(context, "Department requested", Toast.LENGTH_SHORT).show()
                             }
                         }, "")
                         return@ListDialog

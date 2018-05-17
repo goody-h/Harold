@@ -3,16 +3,16 @@
 <defaultsMap>
     <entry>
         <key>contact_info</key>
-        <value>Email: orsteg.apps@gmail.com||Github: github.com/goody-h/harold</value>
+        <value>Email: orsteg.apps@gmail.com||Github: github.com/goody-h/Harold</value>
     </entry>
     <entry>
         <key>help_site</key>
-        <value>http://goody-h.github.io/harold</value>
+        <value>http://goody-h.github.io/Harold</value>
     </entry>
 
     <entry>
         <key>version</key>
-        <value>1</value>
+        <value>2</value>
     </entry>
 
 </defaultsMap>

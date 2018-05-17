@@ -258,6 +258,10 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
     override fun onBackPressed() {
 
         if (mFragmentManager?.onBackPresses(actionBtn!!) == true)

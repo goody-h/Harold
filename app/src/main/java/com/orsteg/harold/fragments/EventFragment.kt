@@ -1,7 +1,9 @@
 package com.orsteg.harold.fragments
 
 
+import android.app.Activity
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.RectF
 import android.os.Bundle
@@ -106,7 +108,8 @@ class EventFragment : BaseFragment(), WeekView.EventClickListener, WeekLoader.We
 
         mAction = View.OnClickListener {
             val intent = Intent(context, NewEventActivity::class.java)
-            startActivity(intent)
+
+            startActivityForResult(intent, NEW_EVENT_CODE)
         }
 
         if (isHidden) {
@@ -118,6 +121,29 @@ class EventFragment : BaseFragment(), WeekView.EventClickListener, WeekLoader.We
         return inflater.inflate(R.layout.fragment_event, container, false)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == NEW_EVENT_CODE && resultCode == Activity.RESULT_OK){
+            if (data != null){
+                val day = data.getIntExtra(Event.DAY_INDEX, -1)
+                var start = data.getIntExtra(Event.START_TIME, -1)
+
+                if (day != -1 && start != -1){
+                    val cal = Calendar.getInstance()
+                    cal.set(Calendar.DAY_OF_WEEK, day)
+
+                    start /= TimeConstants.HOUR.toInt()
+
+                    mWeekView!!.goToDate1(cal)
+                    mWeekView!!.goToHour1(start.toDouble() - 1)
+
+                    mWeekView!!.invalidate()
+                }
+                Toast.makeText(context!!, "Event created successfully", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -467,6 +493,8 @@ class EventFragment : BaseFragment(), WeekView.EventClickListener, WeekLoader.We
         private val TYPE_DAY_VIEW = 1
         private val TYPE_THREE_DAY_VIEW = 2
         private val TYPE_WEEK_VIEW = 3
+
+        private val NEW_EVENT_CODE = 33
 
         /**
          * Use this factory method to create a new instance of
