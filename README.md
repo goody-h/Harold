@@ -20,18 +20,23 @@ The app is primarily a utility and educational resource intended for use by stud
 - Scheduled event reminder
 
 ## Releases
-Releases are regularly uploaded to [Google play store](https://play.google.com/store/apps/details?id=com.orsteg.harold) in both production and beta stages. Support by downloading tthe latest version of the application and possibly droping a review. You could also opt in for the beta testing program to get early access on future changes to be implemented.
+Releases are regularly uploaded to [Google play store](https://play.google.com/store/apps/details?id=com.orsteg.harold) in both production and beta stages. Support by downloading the latest version of the application and possibly droping a review. You could also opt in for the beta testing program to get early access on future changes to be implemented.
 
 #### Changelog
 **V1.0.0-beta**
 - Initial test release
+
+**V1.1.0**
+- Fixed template upload
+- Fixed new event added result
+- Bug fixes
 
 ## Contributing
 This project is open to contributions. Areas of focus should include:
 - Layout inprovement to meet material design standard and specifications
 - Code optimisation for better user experience
 - Bug fixes
-- Improvement of [readme](Readme.md) file
+- Improvement of [readme](README.md) file
 
 #### Further implementations
 - Exporting of result to pdf file.
