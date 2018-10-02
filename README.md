@@ -20,7 +20,7 @@ The app is primarily a utility and educational resource intended for use by stud
 - Scheduled event reminder
 
 ## Releases
-Releases are regularly uploaded to [Google play store](https://play.google.com/store/apps/details?id=com.orsteg.harold) in both production and beta stages. Support by downloading the latest version of the application and possibly droping a review. You could also opt in for the beta testing program to get early access on future changes to be implemented.
+Releases are regularly uploaded to [Google play store](https://play.google.com/store/apps/details?id=com.orsteg.harold) in both production and beta stages. Support by downloading the latest version of the application and possibly dropping a review. You could also opt in for the beta testing program to get early access on future changes to be implemented.
 
 #### Changelog
 **V1.0.0-beta**
@@ -31,9 +31,15 @@ Releases are regularly uploaded to [Google play store](https://play.google.com/s
 - Fixed new event added result
 - Bug fixes
 
+**V1.2.0**
+- Added privacy policy
+- Added terms and conditions
+- Bug fixes
+- Increased device range
+
 ## Contributing
 This project is open to contributions. Areas of focus should include:
-- Layout inprovement to meet material design standard and specifications
+- Layout improvement to meet material design standard and specifications
 - Code optimisation for better user experience
 - Bug fixes
 - Improvement of [readme](README.md) file
@@ -46,7 +52,7 @@ This project is open to contributions. Areas of focus should include:
 #### Rules
 1. Submit an issue describing your proposed change to the application.
 2. Fork the repo if you haven't, implement and test your changes. 
-3. Any other classess created could be written either in `java` or `kotlin`, but `kotlin` would be prefered.
+3. Any other classes created could be written either in `java` or `kotlin`, but `kotlin` would be preferred.
 4. Public methods created within classes should be well documented.
 5. No particular coding style is enforced. Try making your code as clear as possible.
 6. Ensure that all your changes are on the master branch. 
@@ -60,6 +66,6 @@ This project aims at creating a first class utility and educational software for
 This project is licenced under the GNU Affero General Public License v3.0. Read the [license](LICENSE) statement for more information.
 
 ## Contact
-- Support: orsteg.apps@gmail.com
-- Developer: goodhopeordu@yahoo.com
-- Website: https://orsteg.com
+- Support: [orsteg.apps@gmail.com](mailto:orsteg.apps@gmail.com)
+- Developer: [goodhopeordu@yahoo.com](mailto:goodhopeordu@yahoo.com)
+- Website: [https://orsteg.com](https://orsteg.com)

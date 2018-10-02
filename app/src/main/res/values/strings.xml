@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">Harold</string>
-    <string name="version">2</string>
+    <string name="version">3</string>
 
     <string name="github_repo">http://github.com/goody-h/Harold</string>
     <string name="email">orsteg.apps@gmail.com</string>
+
+    <string name="privacy_policy">https://harold.apps.orsteg.com/privacy_policy.html</string>
+    <string name="terms_and_conditions">https://harold.apps.orsteg.com/terms_and_conditions.html</string>
 
     <string name="admob_app_id">ca-app-pub-2224977611625866~6153956063</string>
 

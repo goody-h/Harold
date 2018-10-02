@@ -275,7 +275,7 @@ class FileHandler {
         private val RESULT_HEAD = "${tab(2)}THIS IS A PERSONAL RESULT FILE (.res.txt)"
         private val FOOT_TEXT = "${tab(2)}${FirebaseRemoteConfig.getInstance().getString("contact_info").replace("||", "\n${tab(2)}")}"
 
-        private val VERSION = "1.0"
+        private val VERSION = "1.1"
 
         val EXTERNAL_DIR: File
             get() {
@@ -291,7 +291,7 @@ class FileHandler {
             }
 
         fun getTemplateFile(name: String) = File(TEMPLATES_DIR, "$name.tmp.txt")
-        fun getResultFile(context: Context)  = File(context.filesDir,"RESULT_STATE.tmp.txt")
+        fun getResultFile(context: Context)  = File(context.getExternalFilesDir("result"), "RESULT_STATE.tmp.txt")
         fun getTemporaryTemp(context: Context) = File(context.cacheDir, "TEMP_FILE.tmp.txt")
 
         fun wrapFile(data: String, isTemplate: Boolean = true) =

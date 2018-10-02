@@ -8,16 +8,11 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.orsteg.harold"
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 27
-        versionCode 2
-        versionName "1.1.0"
+        versionCode 3
+        versionName "1.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        vectorDrawables {
-            useSupportLibrary true
-
-        }
 
     }
     buildTypes {

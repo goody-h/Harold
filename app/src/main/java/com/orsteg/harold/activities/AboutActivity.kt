@@ -52,6 +52,16 @@ class AboutActivity : AppCompatActivity() {
             val url = view.context.resources.getString(R.string.github_repo)
             intent.data = Uri.parse(url)
             startActivity(intent)
+        }), InfoItem("Privacy Policy", View.OnClickListener { view ->
+            val intent = Intent(Intent.ACTION_VIEW)
+            val url = view.context.resources.getString(R.string.privacy_policy)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
+        }), InfoItem("Terms and Conditions", View.OnClickListener { view ->
+            val intent = Intent(Intent.ACTION_VIEW)
+            val url = view.context.resources.getString(R.string.terms_and_conditions)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
         }))
 
         val list = findViewById<ListView>(R.id.options)
