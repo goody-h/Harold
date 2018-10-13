@@ -129,16 +129,16 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
     fun onBackPresses(actionBtn: FloatingActionButton): Boolean{
 
-        val n = if (mHistory.size > 1) mHistory[mHistory.size - 2] else -1
-        mHistory.removeAt(mHistory.size-1)
+        return if (mGroups[mCurrentGroup].onBackPressed(actionBtn)){
+            val n = if (mHistory.size > 1) mHistory[mHistory.size - 2] else -1
+            mHistory.removeAt(mHistory.size-1)
 
-        return if (n != -1){
-            if (mGroups[mCurrentGroup].onBackPressed(actionBtn)){
+            return if (n != -1){
                 tabLayout.getTabAt(n)?.select()
-            }
-            false
-        }
-            else true
+                false
+            } else true
+        } else false
+
     }
 
     fun onSaveInstanceState(outState: Bundle){
