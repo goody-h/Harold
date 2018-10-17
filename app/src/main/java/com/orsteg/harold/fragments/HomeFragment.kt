@@ -2,6 +2,7 @@ package com.orsteg.harold.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.FragmentTransaction
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,10 @@ import com.orsteg.harold.utils.result.Semester
  * create an instance of this fragment.
  */
 class HomeFragment : BaseFragment() {
+    override fun setSharedElements(transaction: FragmentTransaction) {
+        transaction.addSharedElement(cgpaDisplay, "round_element")
+        transaction.addSharedElement(options, "curved_element")
+    }
 
     override val mPrefType: String = Preferences.RESULT_PREFERENCES
 
@@ -49,6 +54,8 @@ class HomeFragment : BaseFragment() {
     private var reset: Boolean = false
 
     private var cgpaTxt: TextView? = null
+    private var cgpaDisplay: View? = null
+    private var options: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,8 +76,14 @@ class HomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         cgpaTxt = view.findViewById(R.id.cgpa)
+        cgpaDisplay = view.findViewById(R.id.cgpa_display)
+        options = view.findViewById(R.id.options)
 
         view.findViewById<View>(R.id.result).setOnClickListener{
+            mListener?.setFragment(1)
+        }
+
+        cgpaDisplay?.setOnClickListener{
             mListener?.setFragment(1)
         }
         view.findViewById<View>(R.id.grading).setOnClickListener{

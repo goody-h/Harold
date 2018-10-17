@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
 import android.view.View
 
 import com.orsteg.harold.utils.app.Preferences
@@ -44,6 +45,8 @@ abstract class BaseFragment : Fragment() {
     abstract fun onBackPressed(): Boolean
 
     abstract fun refresh(option: Int)
+
+    abstract fun setSharedElements(transaction: FragmentTransaction)
 
 
     interface OnFragmentInteractionListener {

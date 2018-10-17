@@ -1,9 +1,11 @@
 package com.orsteg.harold.fragments
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +27,11 @@ import java.util.*
  * create an instance of this fragment.
  */
 class ResultFragment : BaseFragment() {
+    override fun setSharedElements(transaction: FragmentTransaction) {
+        transaction.addSharedElement(actionBtn, "round_element")
+        transaction.addSharedElement(ring, "curved_element")
+    }
+
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
             if(pendingReset) {
@@ -166,21 +173,22 @@ class ResultFragment : BaseFragment() {
     }
 
     private fun animateRing() {
-        ring!!.alpha = 1f
-
-        task?.cancel()
+        val anim = ObjectAnimator.ofFloat(ring, "alpha", 1f)
+        anim.duration = 1000
+        anim.start()
 
         task = object : TimerTask() {
             override fun run() {
                 activity?.runOnUiThread {
-                    ring!!.alpha = 0.3f
+                    val animB = ObjectAnimator.ofFloat(ring, "alpha", 0.2f)
+                    animB.duration = 1000
+                    animB.start()
                     task = null
                 }
             }
 
         }
-
-        timer.schedule(task, 2000)
+        timer.schedule(task, 3000)
     }
 
     fun setActionBtn(resId: Int, listener: View.OnClickListener?) {

@@ -3,7 +3,9 @@ package com.orsteg.harold.utils.app
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.transition.*
 import android.support.v4.app.FragmentManager
+import android.transition.Transition
 import android.view.View
 import com.orsteg.harold.R
 import com.orsteg.harold.fragments.*
@@ -72,25 +74,33 @@ class FragmentManager(context: Context, private val parent: View, private var na
             if (frag.isHidden || new) {
 
                 val transaction = mFragmentManager.beginTransaction()
+                pFrag?.setSharedElements(transaction)
 
                 if (new) {
 
-                    if (pFrag != null) {
-                        transaction.hide(pFrag)
-                    }
-
                     val tag = mGroups[mCurrentGroup].fragTag
 
-                    transaction.add(parent.id, frag, tag)
-                } else {
+                    frag.sharedElementEnterTransition = DetailsTransition()
+                    frag.enterTransition = Fade()
+                    frag.exitTransition = Fade()
+
                     if (pFrag != null) {
 
-                        transaction.hide(pFrag)
+                        transaction.replace(parent.id, frag, tag)
+                    } else {
+                        transaction.add(parent.id, frag, tag)
                     }
 
-                    transaction.show(frag)
-                }
+                } else {
 
+                    if (pFrag != null) {
+
+                        transaction.replace(parent.id, frag)
+                    } else {
+                        transaction.add(parent.id, frag)
+                    }
+                }
+                transaction.disallowAddToBackStack()
                 transaction.commit()
             }
 
@@ -102,6 +112,13 @@ class FragmentManager(context: Context, private val parent: View, private var na
                 mHistory.remove(position)
                 mHistory.add(position)
             }
+        }
+    }
+
+    class DetailsTransition: TransitionSet() {
+        init {
+            ordering = ORDERING_TOGETHER
+            addTransition(ChangeBounds()).addTransition(ChangeTransform()).addTransition(ChangeImageTransform())
         }
     }
 
@@ -194,7 +211,7 @@ class FragmentManager(context: Context, private val parent: View, private var na
     }
 }
 
-abstract class FragmentGroup(protected val mFragmentManager: FragmentManager) {
+abstract class FragmentGroup(private val mFragmentManager: FragmentManager) {
 
     abstract val title: String
 
