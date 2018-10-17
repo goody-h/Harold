@@ -1,11 +1,8 @@
 package com.orsteg.harold.utils.result
 
 import android.content.Context
-import com.orsteg.harold.database.EventDatabase
 import com.orsteg.harold.database.ResultDataBase
 import com.orsteg.harold.utils.app.Preferences
-import com.orsteg.harold.utils.app.TimeConstants
-import com.orsteg.harold.utils.event.Event
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -35,7 +32,7 @@ class ResultEditor(private val context: Context) {
 
     }
 
-    fun deleteSem(semId: Int) {
+    private fun deleteSem(semId: Int) {
 
         val helper = ResultDataBase(context, semId)
 
@@ -47,7 +44,7 @@ class ResultEditor(private val context: Context) {
     }
 
 
-    fun clearResult(){
+    private fun clearResult(){
 
         var i = 1100
         while (i < 9400) {
@@ -55,12 +52,6 @@ class ResultEditor(private val context: Context) {
             i += if (i % 1000 == 300) 800
             else 100
         }
-
-        Semester.setCurrentSemester(context, 0)
-        Preferences(context, Preferences.RESULT_PREFERENCES).mEditor
-                .putString("result.level.current.text", "LEVEL")
-                .putString("result.semester.current.text", "Semester")
-        deleteNullEvents()
 
     }
 
@@ -105,42 +96,12 @@ class ResultEditor(private val context: Context) {
         }
     }
 
+    fun saveResultState(): JSONObject {
 
-    fun deleteNullEvents() {
-
-        for (day in TimeConstants.DAYS) {
-
-            val helper = EventDatabase(context, day)
-
-            if (Event.eventCount(context, day) == 0) helper.onUpgrade(helper.writableDatabase, 1, 1)
-
-            val res = helper.getAllData()
-
-            while (res.moveToNext()) {
-                Event(context, res.getInt(0), res.getInt(1), day)
-            }
-
-            res.close()
-            helper.close()
-        }
-    }
-
-    fun saveResultState() {
-
-        val result = Preferences(context, Preferences.RESULT_PREFERENCES)
 
         val handler = FileHandler()
 
-        handler.saveResultFile(context)
-
-        val sem = Semester.getCurrentSemester(context)
-        val l = result.mPrefs.getString("result.level.current.text", "LEVEL")
-        val s = result.mPrefs.getString("result.semester.current.text", "SEM")
-
-        result.mEditor.putString("result.level.previous.text", l)
-                .putInt("result.semester.previous", sem)
-                .putString("result.semester.previous.text", s).commit()
-
+        return handler.saveResultFile(context)
     }
 
 

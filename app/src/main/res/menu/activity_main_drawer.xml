@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Dashboard" />
+        <item
+            android:id="@+id/nav_result"
+            android:icon="@drawable/ic_school_black_24dp"
+            android:title="Result Manager" />
+    </group>
+
+    <item android:title="Tools">
+        <menu>
+            <item
+                android:id="@+id/nav_grading"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:title="Grading System" />
+            <item
+                android:id="@+id/nav_template"
+                android:icon="@drawable/ic_format_paint_black_24dp"
+                android:title="Template Manager" />
+        </menu>
+    </item>
+
+    <item android:title="Actions">
+        <menu>
+            <item
+                android:id="@+id/nav_save"
+                android:icon="@drawable/ic_save_black_24dp"
+                android:title="Save Result State" />
+            <item
+                android:id="@+id/nav_restore"
+                android:icon="@drawable/ic_refresh_black_24dp"
+                android:title="Restore Saved State" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/user"
+        android:title="User options"
+        android:visible="false">
+        <menu>
+            <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/ic_edit_black_24dp"
+                android:title="Edit profile" />
+            <item
+                android:id="@+id/nav_password"
+                android:icon="@drawable/ic_security_black_24dp"
+                android:title="Password update" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_sign_out"
+                android:title="Logout" />
+        </menu>
+    </item>
+
+</menu>

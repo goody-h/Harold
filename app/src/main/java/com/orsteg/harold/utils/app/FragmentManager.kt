@@ -2,23 +2,18 @@ package com.orsteg.harold.utils.app
 
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.TabLayout
+import android.support.design.widget.NavigationView
 import android.support.v4.app.FragmentManager
-import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.Toast
+import com.orsteg.harold.R
 import com.orsteg.harold.fragments.*
-import com.orsteg.harold.utils.event.NotificationScheduler
 import com.orsteg.harold.utils.user.AppUser
 
 /**
  * Created by goodhope on 4/23/18.
  */
-class FragmentManager(context: Context, private val parent: View, private var tabLayout: TabLayout,
-                      private val mFragmentManager: FragmentManager, private val actionBtn: FloatingActionButton) {
+class FragmentManager(context: Context, private val parent: View, private var navView: NavigationView,
+                      private val mFragmentManager: FragmentManager) {
 
     private var mCurrentGroup: Int = -1
     private var mPreviousGroup: Int = -1
@@ -27,10 +22,9 @@ class FragmentManager(context: Context, private val parent: View, private var ta
     private var initPosition = 0
 
     private var mGroups = arrayOf(
-            ResultGroup(mFragmentManager),
-            EventGroup(context, mFragmentManager),
-            ProfileGroup(mFragmentManager)
-            )
+            HomeGroup(mFragmentManager),
+            ResultGroup(mFragmentManager)
+    )
 
     private var mHistory = ArrayList<Int>()
 
@@ -40,39 +34,22 @@ class FragmentManager(context: Context, private val parent: View, private var ta
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentManagerListener")
         }
-
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                setFragment(tab.position)
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab) {
-
-            }
-        })
     }
 
-    fun initFragment(){
-
-        tabLayout.getTabAt(initPosition)?.select()
-        if (initPosition == 0)setFragment(initPosition)
-
+    fun initFragment() {
+        setFragment(initPosition)
     }
 
-    fun resetGroup(which: Int){
-        if(mCurrentGroup == which){
+    fun resetGroup(which: Int) {
+        if (mCurrentGroup == which) {
             setFragment(mCurrentGroup, reset = true)
         } else {
             mGroups[which].pendingReset = true
         }
     }
 
-    fun refreshFragment(group: Int){
-        mGroups[group].getCurrentFragment()?.refresh()
+    fun refreshFragment(group: Int, option: Int) {
+        mGroups[group].getCurrentFragment()?.refresh(option)
     }
 
     fun setFragment(position: Int, reset: Boolean = false) {
@@ -119,6 +96,7 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
             if (!reset) {
                 mListener?.setToolbarTitle(mGroups[mCurrentGroup].title)
+                navView.menu.findItem(arrayOf(R.id.nav_dashboard, R.id.nav_result)[mCurrentGroup]).isChecked = true
 
                 mPreviousGroup = mCurrentGroup
                 mHistory.remove(position)
@@ -127,34 +105,34 @@ class FragmentManager(context: Context, private val parent: View, private var ta
         }
     }
 
-    fun onBackPresses(actionBtn: FloatingActionButton): Boolean{
+    fun onBackPresses(): Boolean {
 
-        return if (mGroups[mCurrentGroup].onBackPressed(actionBtn)){
+        return if (mGroups[mCurrentGroup].onBackPressed()) {
             val n = if (mHistory.size > 1) mHistory[mHistory.size - 2] else -1
-            mHistory.removeAt(mHistory.size-1)
+            mHistory.removeAt(mHistory.size - 1)
 
-            return if (n != -1){
-                tabLayout.getTabAt(n)?.select()
+            return if (n != -1) {
+                setFragment(n)
                 false
             } else true
         } else false
 
     }
 
-    fun onSaveInstanceState(outState: Bundle){
+    fun onSaveInstanceState(outState: Bundle) {
 
         outState.putInt("harold.fragment.current", mCurrentGroup)
         outState.putIntegerArrayList("harold.fragment.history", mHistory)
-        for (i in 0 until mGroups.size){
+        for (i in 0 until mGroups.size) {
             mGroups[i].onSaveInstanceState(outState)
         }
     }
 
-    fun restoreState(inState: Bundle){
-        initPosition = inState.getInt("harold.fragment.current",0)
+    fun restoreState(inState: Bundle) {
+        initPosition = inState.getInt("harold.fragment.current", 0)
         mHistory = inState.getIntegerArrayList("harold.fragment.history")
 
-        for (i in 0 until mGroups.size){
+        for (i in 0 until mGroups.size) {
             mGroups[i].onRestoreInstance(inState)
         }
     }
@@ -171,7 +149,7 @@ class FragmentManager(context: Context, private val parent: View, private var ta
 
     }
 
-    class ResultGroup(mFragmentManager: FragmentManager): FragmentGroup(mFragmentManager) {
+    class ResultGroup(mFragmentManager: FragmentManager) : FragmentGroup(mFragmentManager) {
 
         override val title: String = "Result"
 
@@ -193,106 +171,27 @@ class FragmentManager(context: Context, private val parent: View, private var ta
         }
     }
 
-    class EventGroup(context: Context, mFragmentManager: FragmentManager): FragmentGroup(mFragmentManager) {
+    class HomeGroup(mFragmentManager: FragmentManager) : FragmentGroup(mFragmentManager) {
 
-        override val title: String = "Events"
-
-        private val tags = arrayOf("com.harold.fragment.event", "com.harold.fragment.event.setup")
-
-        private var pref = Preferences(context, Preferences.EVENT_PREFERENCES)
+        override val title: String = "Harold"
 
         init {
-            val setup = pref.mPrefs.getBoolean("harold.event.setup", false)
-
-            if (setup){
-                Thread { NotificationScheduler.setAllReminders(context)}.start()
-            }
+            fragTag = "com.harold.fragment.home"
         }
 
         override fun getFragment(reset: Boolean): BaseFragment {
 
-            val setup = pref.mPrefs.getBoolean("harold.event.setup", false)
-
-            val fragment = if (getCurrentFragment() != null && !reset && !pendingReset)
-                getCurrentFragment()
-            else if (setup){
-                fragTag = tags[0]
-                var mFrag = mFragmentManager.findFragmentByTag(fragTag)
-                if (mFrag == null) {
-                    mFrag = EventFragment.newInstance(0, "")
-                    newFrag = true
-                } else {
-                    newFrag = false
-                }
-                mFrag
+            var fragment = getCurrentFragment()
+            if (fragment == null) {
+                fragment = HomeFragment.newInstance("", "")
+                newFrag = true
             } else {
-                fragTag = tags[1]
-                var mFrag = mFragmentManager.findFragmentByTag(fragTag)
-                if (mFrag == null) {
-                    mFrag = EventSetupFragment.newInstance("", "")
-                    newFrag = true
-                } else {
-                    newFrag = false
-                }
-                mFrag
+                newFrag = false
             }
 
-            return fragment as BaseFragment
+            return fragment
         }
-
     }
-
-    inner class ProfileGroup(mFragmentManager: FragmentManager): FragmentGroup(mFragmentManager) {
-
-        override val title: String = "Profile"
-
-        private val tags = arrayOf("com.harold.fragment.user.offline", "com.harold.fragment.user.null",
-                "com.harold.fragment.user.profile")
-
-        override fun getFragment(reset: Boolean): BaseFragment {
-
-            val fragment = if (getCurrentFragment() != null && !reset && !pendingReset)
-                getCurrentFragment()
-            else if (mListener?.authState == true){
-                if (mListener?.mUser != null) {
-                    fragTag = tags[2]
-                    var mFrag = mFragmentManager.findFragmentByTag(fragTag)
-                    if (mFrag == null) {
-                        mFrag = ProfileFragment.newInstance("", "")
-                        newFrag = true
-                    } else {
-                        newFrag = false
-                    }
-                    mFrag
-                } else {
-                    fragTag = tags[1]
-                    var mFrag = mFragmentManager.findFragmentByTag(fragTag)
-                    if (mFrag == null) {
-                        mFrag = GetUserFragment.newInstance("", "")
-                        newFrag = true
-                    } else {
-                        newFrag = false
-                    }
-                    mFrag
-                }
-            } else {
-                fragTag = tags[0]
-                var mFrag = mFragmentManager.findFragmentByTag(fragTag)
-                if (mFrag == null) {
-                    mFrag = OfflineFragment.newInstance("", "")
-                    newFrag = true
-                } else {
-                    newFrag = false
-                }
-                mFrag
-            }
-
-
-            return fragment as BaseFragment
-        }
-
-    }
-
 }
 
 abstract class FragmentGroup(protected val mFragmentManager: FragmentManager) {
@@ -321,8 +220,8 @@ abstract class FragmentGroup(protected val mFragmentManager: FragmentManager) {
         outState?.putString("harold.fragment.$title.current", fragTag)
     }
 
-    fun onBackPressed(actionBtn: FloatingActionButton): Boolean {
-        return getCurrentFragment()?.onBackPressed(actionBtn)?: true
+    fun onBackPressed(): Boolean {
+        return getCurrentFragment()?.onBackPressed()?: true
     }
 
     fun onRestoreInstance(inState: Bundle){

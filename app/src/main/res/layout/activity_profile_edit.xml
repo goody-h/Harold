@@ -23,9 +23,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
+                android:theme="@style/AppTheme.AppBarOverlay"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:titleTextColor="@color/black">
+                app:popupTheme="@style/AppTheme.PopupOverlay">
 
             </android.support.v7.widget.Toolbar>
 
@@ -55,7 +55,7 @@
                 android:id="@+id/imageView4"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                app:srcCompat="@drawable/ic_icon_filled" />
+                app:srcCompat="@mipmap/icon_filled" />
 
             <TextView
                 android:id="@+id/userName"
@@ -104,7 +104,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Last updated" />
+            android:text="Last updated"
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/upd_time"
@@ -112,7 +113,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="date" />
+            android:text="date"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 

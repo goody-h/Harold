@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.alamkanak.weekview.WeekViewUtil
 import com.google.android.gms.ads.AdRequest
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +19,7 @@ import com.google.firebase.database.*
 import com.orsteg.harold.R
 import com.orsteg.harold.dialogs.ListDialog
 import com.orsteg.harold.dialogs.PlainDialog
+import com.orsteg.harold.utils.app.DateUtil
 import com.orsteg.harold.utils.app.Preferences
 import com.orsteg.harold.utils.firebase.*
 import com.orsteg.harold.utils.user.AppUser
@@ -291,7 +291,7 @@ class ProfileEditActivity : AppCompatActivity() {
 
         profile.adapter = ListAdapter(this, items)
 
-        profile.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l -> (adapterView.adapter as ListAdapter).items[i].listener.onClick(view) }
+        profile.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, _ -> (adapterView.adapter as ListAdapter).items[i].listener.onClick(view) }
 
         (findViewById<View>(R.id.userName) as TextView).text = mUser!!.userName
         setLastUpdate()
@@ -406,16 +406,15 @@ class ProfileEditActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val TAG = "MYTAG"
 
         fun getDayText(date: Calendar): String {
 
-            val today = WeekViewUtil.today()
-            if (WeekViewUtil.isSameDay(today, date)) {
+            val today = DateUtil.today()
+            if (DateUtil.isSameDay(today, date)) {
                 return "today"
             }
             today.add(Calendar.DATE, -1)
-            if (WeekViewUtil.isSameDay(today, date)) {
+            if (DateUtil.isSameDay(today, date)) {
                 return "yesterday"
             }
 

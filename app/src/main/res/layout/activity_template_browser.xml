@@ -25,9 +25,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
+                android:theme="@style/AppTheme.AppBarOverlay"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:titleTextColor="@color/black">
+                app:popupTheme="@style/AppTheme.PopupOverlay">
 
             </android.support.v7.widget.Toolbar>
 
@@ -110,7 +110,7 @@
         <Button
             android:id="@+id/online"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="5dp"
             android:layout_weight="1"
@@ -122,28 +122,49 @@
         <Button
             android:id="@+id/storage"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@android:color/holo_green_dark"
+            android:background="@color/colorAccent"
             android:maxWidth="160dp"
             android:padding="5dp"
             android:text="Choose from storage" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
         <Button
-            android:id="@+id/active"
+            android:id="@+id/save"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@android:color/holo_blue_dark"
+            android:background="@color/colorPrimary"
+            android:maxWidth="160dp"
+            android:padding="5dp"
+            android:text="Save active template"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/active"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
             android:maxWidth="160dp"
             android:padding="5dp"
             android:text="Upload active template"
-            android:visibility="gone" />
-
+            android:visibility="visible" />
     </LinearLayout>
 
     <TextView

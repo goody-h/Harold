@@ -55,9 +55,9 @@ class LoginActivity : AppCompatActivity() {
         }
         mAuth?.addAuthStateListener(mAuthListener!!)
 
-        login.setOnClickListener{v ->
+        login.setOnClickListener{_ ->
             hideInput()
-            login(v)
+            login()
         }
 
     }
@@ -71,7 +71,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    fun login(v: View) {
+    private fun login() {
 
         if (validate()) {
             if (networkTest()) {

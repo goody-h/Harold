@@ -105,8 +105,6 @@ class Course(context: Context, var id: Int, var courseNo: Int, var code: String,
 
 object Semester{
 
-    private val CURRENT = "result.semester.current"
-
 
     fun semCount(semId: Int) = "result.semester.$semId.count"
 
@@ -139,19 +137,6 @@ object Semester{
         pref.mEditor.putInt(semCount(semId), n).apply()
 
         return n
-    }
-
-    fun setCurrentSemester(context: Context, semId: Int){
-        val pref = Preferences(context, Preferences.RESULT_PREFERENCES)
-
-        pref.mEditor.putInt(CURRENT, semId).apply()
-
-    }
-
-    fun getCurrentSemester(context: Context): Int{
-        val pref = Preferences(context, Preferences.RESULT_PREFERENCES)
-
-        return pref.mPrefs.getInt(CURRENT, 0)
     }
 
 }

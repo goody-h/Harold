@@ -32,16 +32,7 @@
 
     <style name="popupTheme" parent="AppTheme.PopupOverlay">
         <item name="android:textColor">#000000</item>
-        <item name="android:background">#ffffff</item>
-    </style>
-
-    <style name="BottomTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorHeight">0dp</item>
-        <item name="tabPaddingStart">0dp</item>
-        <item name="tabPaddingEnd">0dp</item>
-        <item name="tabGravity">fill</item>
-        <item name="tabMode">fixed</item>
-
+        <item name="android:background">#FFFFFF</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

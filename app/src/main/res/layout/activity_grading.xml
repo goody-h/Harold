@@ -19,9 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:theme="@style/AppTheme.AppBarOverlay"
             app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:titleTextColor="@color/black">
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
         </android.support.v7.widget.Toolbar>
 
@@ -102,7 +102,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/border_filled"
                 android:minHeight="35dp"
-                android:text="Reset" />
+                android:text="Reset"
+                android:textColor="@color/white" />
 
             <Button
                 android:id="@+id/cancel"
@@ -113,7 +114,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/border_filled"
                 android:minHeight="35dp"
-                android:text="Finish" />
+                android:text="Finish"
+                android:textColor="@color/white" />
 
         </LinearLayout>
 

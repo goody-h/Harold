@@ -10,10 +10,10 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import com.alamkanak.weekview.WeekViewUtil
 import java.util.*
 import com.orsteg.harold.R
 import com.orsteg.harold.activities.TemplateViewerActivity
+import com.orsteg.harold.utils.app.DateUtil
 import com.orsteg.harold.utils.firebase.References
 import com.orsteg.harold.utils.result.Template
 import com.orsteg.harold.utils.result.TemplateManager
@@ -175,12 +175,12 @@ class DetailsDialog(context: Context, private val mTemplate: TemplateManager) : 
 
         fun getDayText(date: Calendar): String {
 
-            val today = WeekViewUtil.today()
-            if (WeekViewUtil.isSameDay(today, date)) {
+            val today = DateUtil.today()
+            if (DateUtil.isSameDay(today, date)) {
                 return "today"
             }
             today.add(Calendar.DATE, -1)
-            if (WeekViewUtil.isSameDay(today, date)) {
+            if (DateUtil.isSameDay(today, date)) {
                 return "yesterday"
             }
 

@@ -116,8 +116,6 @@ class AppUser (user: User, val userId: String) : User(user.userName, user.depart
         fun signOut(context: Context){
             FirebaseAuth.getInstance().signOut()
 
-            val prefs = Preferences(context)
-
             clearPersistence(context)
         }
 

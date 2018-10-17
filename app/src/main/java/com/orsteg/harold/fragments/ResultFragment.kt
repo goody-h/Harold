@@ -1,8 +1,6 @@
 package com.orsteg.harold.fragments
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
@@ -12,19 +10,12 @@ import android.view.ViewGroup
 import android.widget.*
 
 import com.orsteg.harold.R
-import com.orsteg.harold.activities.GradingActivity
-import com.orsteg.harold.activities.TemplateBrowserActivity
-import com.orsteg.harold.activities.TemplateViewerActivity
-import com.orsteg.harold.database.EventDatabase
 import com.orsteg.harold.database.ResultDataBase
 import com.orsteg.harold.dialogs.AddDialog
 import com.orsteg.harold.dialogs.LoaderDialog
 import com.orsteg.harold.dialogs.WarningDialog
 import com.orsteg.harold.utils.app.Preferences
-import com.orsteg.harold.utils.event.Event
 import com.orsteg.harold.utils.result.*
-import java.io.File
-import java.io.FileInputStream
 import java.util.*
 
 /**
@@ -35,17 +26,11 @@ import java.util.*
  */
 class ResultFragment : BaseFragment() {
     override fun onHiddenChanged(hidden: Boolean) {
-        if (hidden) {
-            semDisplay?.visibility = View.GONE
-            semNav?.visibility = View.GONE
-
-        } else {
-
-            semDisplay?.visibility = View.VISIBLE
-            semNav?.visibility = View.VISIBLE
-
-            mListener?.shoWActionBtn(mAction)
-
+        if (!hidden) {
+            if(pendingReset) {
+                initiate()
+                pendingReset = false
+            }
         }
     }
 
@@ -54,60 +39,69 @@ class ResultFragment : BaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
     }
 
-    override fun onBackPressed(actionBtn: FloatingActionButton): Boolean {
+    override fun onBackPressed(): Boolean {
         if (state == -1) {
-            exitMultiselect()
+            exitMultiSelect()
             return false
         }
         return true
     }
 
-    override fun refresh() {
-
+    override fun refresh(option: Int) {
+        when (option) {
+            0 -> {
+                if (!isHidden) initiate()
+                else pendingReset = true
+            }
+            1 -> {
+                reset = true
+            }
+        }
     }
 
-    // TODO: Rename and change types of parameters
     private var mParam1: String? = null
     private var mParam2: String? = null
 
     private var semNav: View? = null
     private var semDisplay: View? = null
+    private var actionBtn: FloatingActionButton? = null
 
     private var mAction: View.OnClickListener? = null
 
     var Semester_Id: Int = 0
     var GPA: Float = 0.toFloat()
-    var TCU = 0.0
-    var TCU_Display: TextView? = null
-    var GPA_Display: TextView? = null
+    var tcu = 0.0
+    var tcuTxt: TextView? = null
+    var gpaTxt: TextView? = null
 
-    var _cgpa: TextView? = null
+    var cgpaTxt: TextView? = null
 
     var result: ListView? = null
-    var spin1: Spinner? = null
-    var spin2: Spinner? = null
-    var arr: array? = null
+    var levSpinner: Spinner? = null
+    var semSpinner: Spinner? = null
+    var arr: CourseAdapter? = null
     private var empty: View? = null
     private var loader: LoaderDialog? = null
+    var foot: View? = null
+    var ring: View? = null
+
 
     var state: Int = 0
 
-    private var currSem: Int = 0
-
     private var SelectSem: Int = 0
 
-    private var currlevel: Int = 0
 
     private var init: Boolean = false
-
-    private var bottomBtn: Button? = null
-
-    private var toggle: State? = null
 
 
     private var gradingSystem: GradingSystem? = null
 
     private var reset: Boolean = false
+
+    private var pendingReset: Boolean = false
+
+    private val timer = Timer()
+    var task: TimerTask? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,28 +114,22 @@ class ResultFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val views = mListener?.getTools(arrayOf(R.id.resultTopTool_inflater, R.id.resultTool_inflater))
-
-        semDisplay = views?.get(1)?.inflate()
-        semNav = views?.get(0)?.inflate()
+        val view = inflater.inflate(R.layout.fragment_result, container, false)
+        semDisplay = view
+        semNav = view.findViewById(R.id.nav)
+        actionBtn = view.findViewById(R.id.actionBtn)
+        ring = view.findViewById(R.id.ring)
 
         mAction = View.OnClickListener { newCourse() }
 
-        if (isHidden){
-            semDisplay?.visibility = View.GONE
-            semNav?.visibility = View.GONE
-        } else {
-            mListener?.shoWActionBtn(mAction)
-        }
-
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_result, container, false)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        spin1 = semNav?.findViewById(R.id.level_select)
-        spin2 = semNav?.findViewById(R.id.sem_select)
+        levSpinner = semNav?.findViewById(R.id.level_select)
+        semSpinner = semNav?.findViewById(R.id.sem_select)
 
         state = 0
 
@@ -157,137 +145,67 @@ class ResultFragment : BaseFragment() {
         val h1 = ArrayList<String>()
         val h2 = ArrayList<String>()
 
-        h1.add(mPreferences.mPrefs.getString("result.level.current.text", "LEVEL"))
-        h2.add(mPreferences.mPrefs.getString("result.semester.current.text", "SEM"))
+        h1.add("LEVEL")
+        h2.add("SEM")
 
-        _cgpa = semDisplay?.findViewById<View>(R.id.cgpa) as TextView
-        TCU_Display = semDisplay?.findViewById<View>(R.id.tcu) as TextView
-        GPA_Display = semDisplay?.findViewById<View>(R.id.gpa) as TextView
+        cgpaTxt = semDisplay?.findViewById<View>(R.id.cgpa) as TextView
+        tcuTxt = semDisplay?.findViewById<View>(R.id.tcu) as TextView
+        gpaTxt = semDisplay?.findViewById<View>(R.id.gpa) as TextView
 
-        bottomBtn = semDisplay?.findViewById<View>(R.id.options) as Button
+        levSpinner?.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, h1)
+        semSpinner?.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, h2)
 
-        toggle = State()
-
-        spin1?.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, h1)
-        spin2?.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, h2)
-
-        currSem = Semester.getCurrentSemester(context!!)
         SelectSem = 0
-        if (currSem != 0) {
-            setSem(currSem)
-        }
 
-        bottomBtn!!.setOnClickListener {
-            mListener?.showBottomSheet(R.menu.result_options) { _, which ->
-                when (which) {
-                    R.id.save1 -> Thread { ResultEditor(context!!).saveResultState() }.start()
-                    R.id.refresh -> resetResultState()
-                    R.id.upload -> {
-                        reset = true
-                        getCurrentTemplate(TemplateViewerActivity.ACTION_UPLOAD)
-                    }
-                    R.id.current -> toggle!!.setChecked(true)
-                    R.id.clear1 -> clearSemester()
-                    R.id.clear2 -> clearResult()
-                    R.id.grading -> {
-                        reset = true
-                        val i = Intent(context, GradingActivity::class.java)
-                        activity?.startActivity(i)
-                    }
-                    R.id.set -> {
-                        reset = true
-                        val intent = Intent(context, TemplateBrowserActivity::class.java)
-                        intent.action = TemplateViewerActivity.ACTION_APPLY
-                        startActivity(intent)
-                    }
-                    R.id.make -> {
-                        reset = true
-                        getCurrentTemplate(TemplateViewerActivity.ACTION_SAVE)
-                    }
-                }
-            }
-        }
-
-        toggle!!.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Semester.setCurrentSemester(context!!, SelectSem)
-                mPreferences.mEditor
-                        .putString("result.level.current.text", spin1?.selectedItem as String)
-                        .putString("result.semester.current.text", spin2?.selectedItem as String).commit()
-
-                currSem = SelectSem
-            } else if (currSem == SelectSem) {
-                Semester.setCurrentSemester(context!!, 0)
-                mPreferences.mEditor
-                        .putString("result.level.current.text", "LEVEL")
-                        .putString("result.semester.current.text", "SEM").commit()
-
-                currSem = 0
-            }
-        })
+        actionBtn?.setOnClickListener(mAction)
 
         init = true
 
         initiate()
 
-
     }
 
-    private inner class State internal constructor() {
-        internal var listener: CompoundButton.OnCheckedChangeListener
+    private fun animateRing() {
+        ring!!.alpha = 1f
 
-        init {
-            listener = CompoundButton.OnCheckedChangeListener { compoundButton, b -> }
+        task?.cancel()
+
+        task = object : TimerTask() {
+            override fun run() {
+                activity?.runOnUiThread {
+                    ring!!.alpha = 0.3f
+                    task = null
+                }
+            }
+
         }
 
-        internal fun setOnCheckedChangeListener(listener: CompoundButton.OnCheckedChangeListener) {
-            this.listener = listener
-        }
-
-        internal fun setChecked(check: Boolean) {
-            listener.onCheckedChanged(null, check)
-        }
+        timer.schedule(task, 2000)
     }
 
+    fun setActionBtn(resId: Int, listener: View.OnClickListener?) {
+        actionBtn?.setImageResource(resId)
+        actionBtn?.setOnClickListener(listener)
+    }
 
     private fun newCourse() {
 
         AddDialog(context!!, Semester_Id, false, true){ semId, _, _ ->
-            var curr = false
-            val sem = currSem
-            val l = mPreferences.mPrefs.getString("result.level.current.text", "LEVEL")
-            val s = mPreferences.mPrefs.getString("result.semester.current.text", "SEM")
 
-
-            if (semId != currSem) {
-                currSem = semId
-                curr = true
-            }
             initiate()
 
-            if (curr) {
-                toggle!!.setChecked(false)
-                currSem = sem
-
-                Semester.setCurrentSemester(context!!, sem)
-                mPreferences.mEditor
-                        .putString("result.level.current.text", l)
-                        .putString("result.semester.current.text", s).commit()
-            }
         }.show()
 
     }
 
-    fun initiate() {
+    private fun initiate() {
 
-        _cgpacalc()
+        cgpaCalc()
 
         val lel = context!!.resources.getStringArray(R.array.levels)
         val sem = context!!.resources.getStringArray(R.array.semes)
         val levels = ArrayList<String>()
         val num = ArrayList<Level>()
-
-        currlevel = 0
 
         for (i in 1..9) {
             var showLevel = false
@@ -295,17 +213,14 @@ class ResultFragment : BaseFragment() {
 
             for (j in 1..3) {
 
-                val SemId = i * 1000 + j * 100
-                if (Semester.courseCount(context!!, SemId) != 0) {
-                    l.sems.add(SemId)
+                val semId = i * 1000 + j * 100
+                if (Semester.courseCount(context!!, semId) != 0) {
+                    l.sems.add(semId)
                     l.semn.add(sem[j - 1])
                     showLevel = true
                 }
             }
             if (showLevel) {
-                if (i * 1000 < currSem && i * 1000 + 1000 > currSem) {
-                    currlevel = num.size
-                }
                 num.add(l)
                 levels.add(lel[i - 1])
             }
@@ -315,27 +230,24 @@ class ResultFragment : BaseFragment() {
 
             semNav?.findViewById<View>(R.id.nav)?.visibility = View.VISIBLE
 
-            val adapt1 = spinAdapt1(context!!, levels, num)
+            val adapt1 = LevelAdapter(context!!, levels, num)
 
 
-            spin1?.adapter = adapt1
-
-            spin1?.setSelection(currlevel)
+            levSpinner?.adapter = adapt1
 
 
-            spin1?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            levSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val adapt = parent?.adapter as spinAdapt1
-                    val adapt2 = spinAdapt2(context!!, adapt.levels[position].semn,
+                    val adapt = parent?.adapter as LevelAdapter
+                    val adapt2 = SemAdapter(context!!, adapt.levels[position].semn,
                             adapt.levels[position].sems)
 
-                    spin2?.adapter = adapt2
+                    semSpinner?.adapter = adapt2
 
-                    if (init && position == currlevel) {
-                        var pos = 0
-                        if (currSem != 0) pos = adapt2.sems.indexOf(currSem)
+                    if (init) {
+                        val pos = 0
 
-                        spin2?.setSelection(pos)
+                        semSpinner?.setSelection(pos)
                         init = false
                     }
 
@@ -346,14 +258,13 @@ class ResultFragment : BaseFragment() {
                 }
             }
 
-            spin2?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            semSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    // TODO: 10/29/2017 get the results here and iterate it into an adapter
 
-                    if (parent?.adapter is spinAdapt2) {
-                        val adapt = parent.adapter as spinAdapt2
-                        val SemId = adapt.sems[position]
-                        setSem(SemId)
+                    if (parent?.adapter is SemAdapter) {
+                        val adapt = parent.adapter as SemAdapter
+                        val semId = adapt.sem[position]
+                        setSem(semId)
                     }
                 }
 
@@ -361,9 +272,14 @@ class ResultFragment : BaseFragment() {
 
                 }
             }
+
         } else {
-            result?.adapter = array(context!!)
+            result?.adapter = CourseAdapter(context!!)
             result?.emptyView = empty
+            if(foot != null) {
+                result?.removeFooterView(foot)
+                foot = null
+            }
 
             val l = ArrayList<String>()
             l.add("LEVEL")
@@ -373,17 +289,16 @@ class ResultFragment : BaseFragment() {
             semNav?.findViewById<View>(R.id.nav)?.visibility = View.GONE
 
 
-            spin1?.onItemSelectedListener = null
-            spin2?.onItemSelectedListener = null
-            spin1?.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, l)
-            spin2?.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, s)
-            toggle!!.setChecked(false)
+            levSpinner?.onItemSelectedListener = null
+            semSpinner?.onItemSelectedListener = null
+            levSpinner?.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, l)
+            semSpinner?.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, s)
 
-            GPA_Display?.text = "0"
+            gpaTxt?.text = "0"
             GPA = 0f
-            _cgpa?.text = "0"
-            TCU = 0.0
-            TCU_Display?.text = "0"
+            cgpaTxt?.text = "0.00"
+            tcu = 0.0
+            tcuTxt?.text = "0"
 
         }
     }
@@ -391,118 +306,79 @@ class ResultFragment : BaseFragment() {
     private fun setSem(SemId: Int) {
 
         Semester_Id = SemId
-        TCU = 0.0
+        tcu = 0.0
 
         SelectSem = SemId
 
-        TCU_Display?.text = TCU.toString()
+        tcuTxt?.text = tcu.toString()
 
         val helper = ResultDataBase(context!!, SemId)
         val res = helper.getAllData()
 
-        val Course_count = Semester.courseCount(context!!, SemId)
+        val courseCount = Semester.courseCount(context!!, SemId)
 
         val courses = ArrayList<Course>()
 
-        for (j in 1 until Course_count + 1) {
+        for (j in 1 until courseCount + 1) {
             res.moveToPosition(j - 1)
-            val Course_Id = SemId + j
-            val SqL_Id = res.getInt(0)
-            val Title = res.getString(1)
-            val Code = res.getString(2)
-            val Cu = res.getDouble(3)
-            val Grade = res.getString(4)
+            val courseId = SemId + j
+            val sqlId = res.getInt(0)
+            val title = res.getString(1)
+            val code = res.getString(2)
+            val cu = res.getDouble(3)
+            val grade = res.getString(4)
 
-            val cou = Course(context!!, Course_Id, j, Code, Title, Cu, Grade, SqL_Id)
+            val cou = Course(context!!, courseId, j, code, title, cu, grade, sqlId)
 
-            EditTCU(TCU + cou.cu)
+            editTcu(tcu + cou.cu)
 
             courses.add(cou)
         }
         res.close()
         helper.close()
 
-        arr = array(context!!)
+        arr = CourseAdapter(context!!)
         arr?.template = courses
         arr?.sem_Id = SemId
 
         result?.adapter = arr
 
-        _gpacalc()
-        _cgpacalc()
+        gpaCalc()
+        cgpaCalc()
 
-        toggle!!.setChecked(SemId == currSem)
-
+        animateRing()
     }
 
-    private inner class spinAdapt1(context: Context, objects: List<*>, val levels: ArrayList<Level>) : ArrayAdapter<Any>(context, android.R.layout.simple_spinner_dropdown_item, objects)
+    private inner class LevelAdapter(context: Context, objects: List<*>, val levels: ArrayList<Level>) : ArrayAdapter<Any>(context, android.R.layout.simple_spinner_dropdown_item, objects)
 
-    inner class spinAdapt2(context: Context, objects: List<*>, val sems: ArrayList<Int>) : ArrayAdapter<Any>(context, android.R.layout.simple_spinner_dropdown_item, objects)
+    inner class SemAdapter(context: Context, objects: List<*>, val sem: ArrayList<Int>) : ArrayAdapter<Any>(context, android.R.layout.simple_spinner_dropdown_item, objects)
 
     override fun onStart() {
         super.onStart()
 
         if (reset || mPreferences.mPrefs.getBoolean("result.changed", false)) {
-            var curr: Boolean
-
-            val sem = mPreferences.mPrefs.getInt("result.semester.previous", 0)
-            val l = mPreferences.mPrefs.getString("result.level.previous.text", "LEVEL")
-            val s = mPreferences.mPrefs.getString("result.semester.previous.text", "SEM")
-
-            val count = Semester.courseCount(context!!, SelectSem)
-
-
-            if (sem != SelectSem) {
-                curr = true
-                currSem = SelectSem
-            } else {
-                curr = false
-                currSem = SelectSem
-            }
-
-            if (count == 0) {
-                currSem = sem
-                curr = false
-            }
 
             initiate()
 
-            if (curr) {
-                toggle!!.setChecked(false)
-                currSem = sem
-            }
-
             mPreferences.mEditor.putBoolean("result.changed", false)
 
-            Semester.setCurrentSemester(context!!, sem)
-            mPreferences.mEditor
-                    .putString("result.level.current.text", l)
-                    .putString("result.semester.current.text", s).commit()
             reset = false
 
         }
-        if (state != 0) exitMultiselect()
-
-    }
-
-    override fun onStop() {
-        super.onStop()
+        if (state != 0) exitMultiSelect()
 
     }
 
 
-    inner class array(var context: Context) : BaseAdapter() {
-        var template: ArrayList<Course>
-        var multidel: ArrayList<Int>
+    inner class CourseAdapter(var context: Context, var template: ArrayList<Course> = ArrayList()) : BaseAdapter() {
+        var multidel: ArrayList<Int> = ArrayList()
         var sem_Id: Int = 0
 
 
-        // pointer showing which result is on editmode
+        // pointer showing which result is on editMode
         var editMode = -1
 
         init {
-            template = ArrayList()
-            multidel = ArrayList()
             editMode = -1
         }
 
@@ -522,9 +398,8 @@ class ResultFragment : BaseFragment() {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             var convertView = convertView
 
-            val holder: viewHolder
+            val holder = ViewHolder()
 
-            holder = viewHolder()
             val inflater = LayoutInflater.from(context)
             convertView = inflater.inflate(R.layout.course_item, parent, false)
 
@@ -540,13 +415,11 @@ class ResultFragment : BaseFragment() {
 
             val course = template[position]
 
-            // TODO: 10/29/2017 apply course deptTemplate
-
 
             val v = convertView.findViewById<View>(R.id.result)
-            v.setOnClickListener { v -> this@array.onClick(v, position, course) }
-            v.setOnLongClickListener { v ->
-                this@array.onLongClick(v, position, course)
+            v.setOnClickListener { _ -> this@CourseAdapter.onClick(position, course) }
+            v.setOnLongClickListener { _ ->
+                this@CourseAdapter.onLongClick(position)
                 true
             }
 
@@ -564,7 +437,12 @@ class ResultFragment : BaseFragment() {
             }
 
             if (editMode == position) {
-                editmode(convertView.findViewById(R.id.main), position, editor, holder.grade)
+                editMode(convertView.findViewById(R.id.main), position, editor, holder.grade)
+            }
+
+            if (foot == null) {
+                foot = inflater.inflate(R.layout.result_foot, parent, false)
+                result?.addFooterView(foot)
             }
 
             return convertView
@@ -572,11 +450,11 @@ class ResultFragment : BaseFragment() {
 
 
         // insert editlayout and initialise it
-        fun editmode(v: View, position: Int, editor: View, grade1: TextView?) {
+        private fun editMode(v: View, position: Int, editor: View, grade1: TextView?) {
             val spin = editor.findViewById<View>(R.id.gradespin) as Spinner
             val delete = editor.findViewById<View>(R.id.delete) as ImageButton
             val edit = editor.findViewById<View>(R.id.edit) as ImageButton
-            val Cunit = editor.findViewById<View>(R.id.unit) as TextView
+            val cUnit = editor.findViewById<View>(R.id.unit) as TextView
 
 
             delete.setOnClickListener {
@@ -587,15 +465,14 @@ class ResultFragment : BaseFragment() {
 
 
                     template.removeAt(position)
-                    EditTCU(TCU - unit)
+                    editTcu(tcu - unit)
                     
                     mPreferences.commit()
                     editMode = -1
                     notifyDataSetChanged()
-                    _gpacalc()
-                    _cgpacalc()
+                    gpaCalc()
+                    cgpaCalc()
 
-                    deleteEvent()
                 }.show()
             }
             edit.setOnClickListener {
@@ -608,16 +485,16 @@ class ResultFragment : BaseFragment() {
                             if (cu % 1 == 0.0) cu.toInt().toString() 
                             else cu.toString() 
 
-                    Cunit.text = s
+                    cUnit.text = s
 
                     if (course != null)
                     template[position] = course
 
-                    EditTCU(TCU - unit + cu)
+                    editTcu(tcu - unit + cu)
 
                     notifyDataSetChanged()
-                    _gpacalc()
-                    _cgpacalc()
+                    gpaCalc()
+                    cgpaCalc()
 
                 }.show()
 
@@ -632,7 +509,7 @@ class ResultFragment : BaseFragment() {
 
                     var tt = spin.selectedItem as String
                     val u: Double
-                    val Qp: Float
+                    val qp: Float
 
                     if (tt == "Grade") {
                         tt = ""
@@ -647,14 +524,14 @@ class ResultFragment : BaseFragment() {
                     template[position].editResult(tt)
                     grade1!!.text = tt
 
-                    Qp = (gp * u).toFloat()
+                    qp = (gp * u).toFloat()
 
                     mPreferences.mEditor
                             .putFloat(Course.unitPref(template[position].id), u.toFloat())
-                            .putFloat(Course.qpPref(template[position].id), Qp).commit()
+                            .putFloat(Course.qpPref(template[position].id), qp).commit()
 
-                    _gpacalc()
-                    _cgpacalc()
+                    gpaCalc()
+                    cgpaCalc()
 
                 }
 
@@ -666,16 +543,14 @@ class ResultFragment : BaseFragment() {
             val s =
                     if (template[position].cu % 1 == 0.0) template[position].cu.toInt().toString() 
                     else template[position].cu.toString() 
-            Cunit.text = s
+            cUnit.text = s
 
 
             (v as LinearLayout).addView(editor)
 
-            // use position to edit editor view
         }
 
-        fun onLongClick(v1: View, position: Int, c: Course) {
-            // TODO: 10/29/2017 set long click action
+        private fun onLongClick(position: Int) {
             if (editMode != -2) {
                 template[position].isSelected = true
                 multidel.add(position)
@@ -683,11 +558,10 @@ class ResultFragment : BaseFragment() {
 
                 notifyDataSetChanged()
 
-                semNav?.visibility = View.INVISIBLE
-                mListener?.hideTabs()
+                semNav?.visibility = View.GONE
                 state = -1
 
-                mListener?.setActionBtn(R.drawable.ic_delete_black_24dp, View.OnClickListener {
+                setActionBtn(R.drawable.ic_delete_black_24dp, View.OnClickListener {
                     Collections.sort(multidel) { o1, o2 -> if (o1 > o2) -1 else if (o1 < o2) 1 else 0 }
 
                     WarningDialog(context, "You are about to delete "
@@ -700,34 +574,36 @@ class ResultFragment : BaseFragment() {
 
 
                             template.removeAt(position1)
-                            EditTCU(TCU - unit)
+                            editTcu(tcu - unit)
                             
                             mPreferences.commit()
                         }
+
+                        if(foot != null && template.size == 0) {
+                            result?.removeFooterView(foot)
+                            foot = null
+                        }
+
                         multidel.clear()
-                        exitMultiselect()
+                        exitMultiSelect()
 
-                        _gpacalc()
-                        _cgpacalc()
-
-                        deleteEvent()
+                        gpaCalc()
+                        cgpaCalc()
 
                     }.show()
                 })
 
-                // TODO: 10/29/2017 Make UI changes
             }
-            // make changes to the course element and editmode then notifydatasetchange
+            // make changes to the course element and editMode then notifydatasetchange
         }
 
-        fun onClick(v: View, position: Int, c: Course) {
-            // TODO: 10/29/2017 set click action
+        private fun onClick(position: Int, c: Course) {
 
             if (editMode != -2) {
-                if (editMode == position)
-                    editMode = -1
+                editMode = if (editMode == position)
+                    -1
                 else
-                    editMode = position
+                    position
 
             } else {
                 if (!c.isSelected) {
@@ -739,7 +615,7 @@ class ResultFragment : BaseFragment() {
 
                     if (multidel.size == 0) {
 
-                        exitMultiselect()
+                        exitMultiSelect()
 
                         return
                     }
@@ -751,8 +627,7 @@ class ResultFragment : BaseFragment() {
             // make changes to the editMode element and notifydatasetchange
         }
 
-        private inner class viewHolder {
-
+        private inner class ViewHolder {
             internal var title: TextView? = null
             internal var code: TextView? = null
             internal var grade: TextView? = null
@@ -762,65 +637,68 @@ class ResultFragment : BaseFragment() {
     }
 
 
-    fun _gpacalc() {
+    fun gpaCalc() {
         var gpa = 0f
-        var Tcu = 0f
-        var Tqp = 0f
+        var tcu = 0f
+        var tqp = 0f
 
 
         for (i in arr!!.template.indices) {
-            val Course_id = arr!!.template[i].id
-            Tcu += mPreferences.mPrefs.getFloat(Course.unitPref(Course_id), 0f)
-            Tqp += mPreferences.mPrefs.getFloat(Course.qpPref(Course_id), 0f)
+            val courseId = arr!!.template[i].id
+            tcu += mPreferences.mPrefs.getFloat(Course.unitPref(courseId), 0f)
+            tqp += mPreferences.mPrefs.getFloat(Course.qpPref(courseId), 0f)
         }
-        if (Tcu != 0f) {
-            gpa = Tqp / Tcu
+        if (tcu != 0f) {
+            gpa = tqp / tcu
         }
 
-        EditGPA(gpa)
+        editGPA(gpa)
     }
 
-    fun _cgpacalc() {
+    fun cgpaCalc() {
 
         var cgpa = 0f
-        var Tcu = 0f
-        var Tqp = 0f
+        var tcu = 0f
+        var tqp = 0f
 
-        val Level_count = 9
-        for (i in 1 until Level_count + 1) {
-            val Levelid = i * 1000
-            val Sem_Count = 3
-            for (j in 1 until Sem_Count + 1) {
-                val SemId = Levelid + j * 100
-                val Course_count = Semester.courseCount(context!!, SemId)
-                if (Course_count != 0) {
-                    for (k in 1 until Course_count + 1) {
-                        val Course_id = SemId + k
-                        Tcu += mPreferences.mPrefs.getFloat(Course.unitPref(Course_id), 0f)
-                        Tqp += mPreferences.mPrefs.getFloat(Course.qpPref(Course_id), 0f)
+        val levelCount = 9
+        for (i in 1 until levelCount + 1) {
+            val levelId = i * 1000
+            val semCount = 3
+            for (j in 1 until semCount + 1) {
+                val semId = levelId + j * 100
+                val courseCount = Semester.courseCount(context!!, semId)
+                if (courseCount != 0) {
+                    for (k in 1 until courseCount + 1) {
+                        val courseId = semId + k
+                        tcu += mPreferences.mPrefs.getFloat(Course.unitPref(courseId), 0f)
+                        tqp += mPreferences.mPrefs.getFloat(Course.qpPref(courseId), 0f)
                     }
                 }
             }
         }
 
 
-        if (Tcu != 0f) {
-            cgpa = Tqp / Tcu
+        if (tcu != 0f) {
+            cgpa = tqp / tcu
         }
         mPreferences.mEditor.putFloat("CGPA", cgpa).commit()
-        _cgpa?.text = cgpa.string()
+
+        if (cgpaTxt?.text != cgpa.string()) animateRing()
+
+        cgpaTxt?.text = cgpa.string()
 
     }
 
-    fun EditTCU(TCu: Double) {
-        TCU = TCu
+    fun editTcu(cu: Double) {
+        tcu = cu
 
-        TCU_Display?.text = TCu.string()
+        tcuTxt?.text = cu.string()
     }
 
-    fun EditGPA(GPa: Float) {
+    private fun editGPA(GPa: Float) {
         GPA = GPa
-        GPA_Display?.text = GPa.string()
+        gpaTxt?.text = GPa.string()
         mPreferences.mEditor.putFloat("GPA" + Semester_Id, GPa).commit()
     }
 
@@ -837,19 +715,16 @@ class ResultFragment : BaseFragment() {
     fun Float.string(): String {
         val d = this.toString().indexOf(".")
 
-        if (this % 1 == 0f) return this.toInt().toString()
-
-        if (d + 4 > this.toString().length) return this.toString()
+        if (d + 3 > this.toString().length) return this.toString() + "0"
 
         return this.toString().substring(0..d+2)
     }
 
 
-    fun exitMultiselect() {
+    fun exitMultiSelect() {
         state = 0
 
         semNav?.visibility = View.VISIBLE
-        mListener?.showTabs()
         arr?.editMode = -1
         if (arr!!.multidel.size != 0) {
             for (i in arr!!.template.indices) {
@@ -860,179 +735,7 @@ class ResultFragment : BaseFragment() {
 
         arr?.notifyDataSetChanged()
 
-        mListener?.setActionBtn(R.drawable.ic_add_black_24dp, mAction)
-    }
-
-    fun deleteEvent() {
-
-        val td = Thread(Runnable {
-            val days = arrayOf("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT")
-
-            for (m in days.indices) {
-                val day = days[m]
-
-                val count = Event.eventCount(context!!, day)
-
-                if (count != 0) {
-                    val helper = EventDatabase(context!!, day)
-
-                    val res = helper.getAllData()
-
-                    for (j in 1 until count + 1) {
-                        res.moveToPosition(j - 1)
-                        val SqL_Id = res.getInt(0)
-                        val Course_id = res.getInt(1)
-
-                        Event(context!!, SqL_Id, Course_id, day, j)
-                    }
-                    res.close()
-                    helper.close()
-                }
-            }
-        })
-        td.start()
-    }
-    
-
-    private fun getCurrentTemplate(action: String) {
-
-        val td = Thread(Runnable {
-
-            val handler = FileHandler()
-
-            val file = FileHandler.getTemporaryTemp(context!!)
-            handler.createTemporaryFile(context!!)
-
-            val i = Intent(context, TemplateViewerActivity::class.java)
-            i.data = Uri.fromFile(file)
-            i.action = action
-            i.putExtra(TemplateViewerActivity.EXTRA_TEMPORARY, true)
-            startActivity(i)
-        })
-
-        td.start()
-    }
-
-
-    fun resetResultState() {
-        loader!!.show()
-        loader!!.hideAbort()
-        loader!!.setLoadMessage("Resetting result, please wait...")
-        val td = Thread(Runnable {
-            val editor = ResultEditor(context!!)
-
-            val file = FileHandler.getResultFile(context!!)
-
-            val worked = editor.addTemplate(FileInputStream(file), true, false)
-
-            if (worked) {
-                var curr: Boolean
-
-                val sem = mPreferences.mPrefs.getInt("result.semester.previous", 0)
-                val l = mPreferences.mPrefs.getString("result.level.previous.text", "LEVEL")
-                val s = mPreferences.mPrefs.getString("result.semester.previous.text", "SEM")
-
-                val count = Semester.courseCount(context!!, SelectSem)
-
-
-                if (sem != SelectSem) {
-                    curr = true
-                    currSem = SelectSem
-                } else {
-                    curr = false
-                    currSem = SelectSem
-                }
-
-                if (count == 0) {
-                    currSem = sem
-                    curr = false
-                }
-
-
-                activity?.runOnUiThread {
-                    loader!!.dismiss()
-                    initiate()
-                }
-                if (curr) {
-                    toggle!!.setChecked(false)
-                    currSem = sem
-                }
-
-                Semester.setCurrentSemester(context!!, sem)
-                mPreferences.mEditor
-                        .putString("result.level.current.text", l)
-                        .putString("result.semester.current.text", s).commit()
-
-            } else
-                activity?.runOnUiThread {
-                    loader!!.dismiss()
-                    Toast.makeText(context, "Sorry unable to reset result", Toast.LENGTH_SHORT).show()
-                }
-        })
-        td.start()
-
-    }
-
-    fun clearSemester() {
-
-        val td = Thread(Runnable {
-
-            ResultEditor(context!!).saveResultState()
-            
-            val helper = ResultDataBase(context!!, SelectSem)
-            val sem = Semester.getCurrentSemester(context!!)
-
-            Semester.decreaseCount(context!!, SelectSem, Semester.courseCount(context!!, SelectSem))
-            helper.onUpgrade(helper.writableDatabase, 1, 1)
-
-            if (sem != SelectSem) {
-                currSem = sem
-            } else {
-                currSem = 0
-
-                Semester.setCurrentSemester(context!!, 0)
-                mPreferences.mEditor
-                        .putString("result.level.current.text", "LEVEL")
-                        .putString("result.semester.current.text", "SEM").commit()
-            }
-            activity?.runOnUiThread { initiate() }
-        })
-
-        td.start()
-
-    }
-
-    fun clearResult() {
-
-        val td = Thread(Runnable {
-
-            ResultEditor(context!!).saveResultState()
-            
-            for (i in 1..9) {
-                for (j in 1..3) {
-
-                    val s = i * 1000 + j * 100
-                    if (Semester.courseCount(context!!, s) != 0) {
-                        val helper = ResultDataBase(context!!, s)
-
-                        Semester.decreaseCount(context!!, s, Semester.courseCount(context!!, s))
-                        helper.onUpgrade(helper.writableDatabase, 1, 1)
-
-                        currSem = 0
-
-                        Semester.setCurrentSemester(context!!, 0)
-                        mPreferences.mEditor
-                                .putString("result.level.current.text", "LEVEL")
-                                .putString("result.semester.current.text", "SEM").commit()
-                    }
-                }
-            }
-
-            activity?.runOnUiThread { initiate() }
-        })
-
-        td.start()
-
+        setActionBtn(R.drawable.ic_add_black_24dp, mAction)
     }
 
     companion object {

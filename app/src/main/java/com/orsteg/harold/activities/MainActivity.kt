@@ -2,22 +2,17 @@ package com.orsteg.harold.activities
 
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.StateListDrawable
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
+import android.support.v4.view.GravityCompat
+import android.support.v7.app.ActionBarDrawerToggle
 import android.view.*
-import android.widget.ImageView
-import com.cocosw.bottomsheet.BottomSheet
+import android.widget.TextView
+import android.widget.Toast
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -25,6 +20,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.orsteg.harold.R
+import com.orsteg.harold.database.ResultDataBase
+import com.orsteg.harold.dialogs.LoaderDialog
 import com.orsteg.harold.dialogs.UpdateDialog
 import com.orsteg.harold.dialogs.WarningDialog
 import com.orsteg.harold.fragments.BaseFragment
@@ -33,32 +30,32 @@ import com.orsteg.harold.utils.app.Preferences
 import com.orsteg.harold.utils.app.TimeConstants
 import com.orsteg.harold.utils.firebase.References
 import com.orsteg.harold.utils.firebase.ValueListener
+import com.orsteg.harold.utils.result.FileHandler
+import com.orsteg.harold.utils.result.ResultEditor
+import com.orsteg.harold.utils.result.Semester
 import com.orsteg.harold.utils.user.AppUser
 import com.orsteg.harold.utils.user.User
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
+import java.io.FileInputStream
 import java.util.*
 
-class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionListener, FragmentManager.OnFragmentManagerListener {
+class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionListener,
+        FragmentManager.OnFragmentManagerListener, NavigationView.OnNavigationItemSelectedListener  {
 
     override var mUser: AppUser? = null
     override var authState: Boolean = false
     override var mInstanceState: Bundle? = null
 
     private var mFragmentManager: FragmentManager? = null
+    private var loader: LoaderDialog? = null
 
     private var mUserRef: DatabaseReference? = null
     private var mAuth: FirebaseAuth? = null
     private var mAuthListener: FirebaseAuth.AuthStateListener? = null
     private var mUserListener: ValueListener? = null
-
-    private var mTabIconsSelected = arrayOf(
-            R.drawable.ic_school_black_24dp,
-            R.drawable.ic_date_range_black_24dp,
-            R.drawable.ic_person_black_24dp
-    )
-
-
-    private var sheet: BottomSheet? = null
+    private var mUserNav: UserNavManager? = null
 
     private val mRand = Random()
 
@@ -78,7 +75,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         mUser = AppUser.getPersistentUser(this)
         authState = prefs.mPrefs.getBoolean("user.hasState", false)
 
-        mFragmentManager = FragmentManager(this, container, bottomTab, supportFragmentManager, actionBtn)
+        mFragmentManager = FragmentManager(this, container, nav_view, supportFragmentManager)
 
         if (savedInstanceState != null){
             mUser = AppUser.getSavedState(savedInstanceState)
@@ -89,7 +86,11 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         }
 
         setSupportActionBar(toolbar)
-        initTabs()
+        initNav()
+
+        mUserNav = UserNavManager(this, nav_view, mUser)
+
+        loader = LoaderDialog(this)
 
         mAuth = FirebaseAuth.getInstance()
 
@@ -102,8 +103,9 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
                 // Set Activity Parameters
                 if (!authState) {
                     authState = true
-                    resetGroup(2)
+                    mUserNav?.loadUser()
                 }
+                mUserNav?.updateEmail(user.email)
                 authState = true
 
                 getCurrentUser(user)
@@ -118,7 +120,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
                 if (authState) {
                     authState = false
-                    resetGroup(2)
+                    mUserNav?.updateUser(mUser)
                     mUserRef?.removeEventListener(mUserListener)
                     mUserRef = null
                     mUserListener = null
@@ -133,6 +135,70 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         FirebaseRemoteConfig.getInstance().fetch(TimeConstants.DAY/1000)
 
         checkVersion()
+
+
+    }
+
+    class UserNavManager(private val context: Context, navView: NavigationView, private var user: AppUser?) {
+        private val header = navView.getHeaderView(0)
+        private val email = header.findViewById<TextView>(R.id.email)
+        private val username = header.findViewById<TextView>(R.id.userName)
+        private val login = header.findViewById<View>(R.id.login)
+        private val signup = header.findViewById<View>(R.id.signup)
+        private val offlineView = header.findViewById<View>(R.id.offline)
+        private val onlineView = navView.menu.findItem(R.id.user)
+        private val loader = header.findViewById<View>(R.id.loader)
+
+        init {
+            login.setOnClickListener {
+                val intent = Intent(context, LoginActivity::class.java)
+                context.startActivity(intent)
+            }
+
+            signup.setOnClickListener {
+                val intent = Intent(context, SignUpActivity::class.java)
+                context.startActivity(intent)
+            }
+
+            setViews()
+        }
+
+        fun loadUser() {
+            offlineView.visibility = View.GONE
+            loader.visibility = View.VISIBLE
+        }
+
+        fun updateUser(user: AppUser?){
+            this.user = user
+            loader.visibility = View.GONE
+            setViews()
+        }
+
+        fun updateEmail(email: String?){
+            this.email.text = email
+        }
+
+        private fun setViews() {
+            if(user != null) {
+                onlineView.isVisible = true
+                offlineView.visibility = View.GONE
+                username.text = user?.userName
+            } else {
+                onlineView.isVisible = false
+                offlineView.visibility = View.VISIBLE
+                email.text = "orsteg.apps@gmail.com"
+                username.text = "Harold"
+            }
+        }
+    }
+
+    private fun initNav() {
+        val toggle = ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        nav_view.setNavigationItemSelectedListener(this)
     }
 
     private fun checkVersion(){
@@ -168,14 +234,13 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
                             mUser = nUser
                             mUser?.persistUser(this@MainActivity)
 
-                            resetGroup(2)
+                            mUserNav?.updateUser(mUser)
                         } else if (mUser?.updateUser(nUser) == true){
 
                             mUser = nUser
                             mUser?.persistUser(this@MainActivity)
 
-                            refreshFragment(2)
-
+                            mUserNav?.updateUser(mUser)
                         }
                     } else {
 
@@ -183,7 +248,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
                         authState = false
                         mUser = null
-                        resetGroup(2)
+                        mUserNav?.updateUser(mUser)
 
                     }
                 }
@@ -193,23 +258,9 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         }
     }
 
-    private fun initTabs(){
-            for (i in 0..2) {
-                val tab = bottomTab.getTabAt(i)
-                if (tab != null)
-                    tab.customView = getTabView(i)
-            }
-    }
 
-    private fun getTabView(position: Int): View{
-        val view = LayoutInflater.from(this).inflate(R.layout.tab_item_bottom, null)
-        val icon: ImageView = view.findViewById(R.id.tab_icon)
-        icon.setImageDrawable(setDrawableSelector(this, mTabIconsSelected[position], mTabIconsSelected[position]))
-        return view
-    }
-
-    fun refreshFragment(group: Int) {
-        mFragmentManager?.refreshFragment(group)
+    override  fun refreshFragment(group: Int, option: Int) {
+        mFragmentManager?.refreshFragment(group, option)
     }
 
     override fun onStart() {
@@ -249,6 +300,66 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Handle navigation view item clicks here.
+        when (item.itemId) {
+            R.id.nav_dashboard -> {
+                mFragmentManager?.setFragment(0)
+            }
+            R.id.nav_result -> {
+                mFragmentManager?.setFragment(1)
+            }
+            R.id.nav_grading -> {
+                refreshFragment(0, 1)
+                refreshFragment(1, 1)
+                val i = Intent(this, GradingActivity::class.java)
+                startActivity(i)
+            }
+            R.id.nav_template -> {
+                refreshFragment(0, 1)
+                refreshFragment(1, 1)
+                val intent = Intent(this, TemplateBrowserActivity::class.java)
+                val bundle = Bundle()
+                mUser?.saveUserState(bundle)
+                intent.putExtra("USER", bundle)
+                intent.action = TemplateViewerActivity.ACTION_APPLY
+                startActivity(intent)
+            }
+            R.id.nav_save -> Thread {
+                val res = ResultEditor(this).saveResultState()
+                if (res.optBoolean("success", false)) {
+                    runOnUiThread{
+                        Toast.makeText(this, "Save Success", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    runOnUiThread{
+                        Toast.makeText(this, "Failed to save state", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }.start()
+            R.id.nav_restore -> {
+                resetResultState()
+            }
+            R.id.nav_profile ->{
+                val intent = Intent(this, ProfileEditActivity::class.java)
+                val bundle = Bundle()
+                mUser?.saveUserState(bundle)
+                intent.putExtra("USER", bundle)
+                startActivity(intent)
+            }
+            R.id.nav_password -> {
+                val intent = Intent(this, PasswordUpdateActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_logout -> {
+                AppUser.signOut(this)
+            }
+        }
+
+        drawer_layout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         if (outState != null) {
@@ -258,64 +369,27 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onBackPressed() {
 
-        if (mFragmentManager?.onBackPresses(actionBtn!!) == true)
-        super.onBackPressed()
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
+            if (mFragmentManager?.onBackPresses() == true)
+                super.onBackPressed()
+        }
 
     }
 
-    override fun onCreateDialog(id: Int): Dialog? {
-
-        return sheet
+    override fun setFragment(id: Int) {
+        mFragmentManager?.setFragment(id)
     }
 
     override fun resetGroup(which: Int) {
         mFragmentManager?.resetGroup(which)
     }
 
-    override fun hideActionBtn() {
-        actionBtn.visibility = View.GONE
-    }
-
-    override fun shoWActionBtn(listener: View.OnClickListener?) {
-        actionBtn.visibility = View.VISIBLE
-        actionBtn.setOnClickListener(listener)
-    }
-
-
-    override fun setActionBtn(resId: Int, listener: View.OnClickListener?) {
-        actionBtn.setImageResource(resId)
-        actionBtn.setOnClickListener(listener)
-    }
-
-    override fun hideTabs() {
-        bottom.visibility = View.GONE
-        val frameParam = container.layoutParams as ViewGroup.MarginLayoutParams
-
-        container.tag = frameParam.bottomMargin
-
-        frameParam.bottomMargin = 0
-    }
-
-    override fun showTabs() {
-        bottom.visibility = View.VISIBLE
-        val frameParam = container.layoutParams as ViewGroup.MarginLayoutParams
-
-        frameParam.bottomMargin = container.tag as Int
-    }
-
-    override fun showBottomSheet(menuId: Int, listener: (DialogInterface, Int) -> Unit) {
-        sheet = BottomSheet.Builder(this).sheet(menuId).listener(listener).grid().build()
-        showDialog(menuId)
-    }
-
-    override fun showSnackBar(message: String, action: String, listener: (View) -> Unit) {
-        Snackbar.make(actionBtn!!, message, Snackbar.LENGTH_LONG)
+    override fun showSnackBar(message: String, action: String, btn: View, listener: (View) -> Unit) {
+        Snackbar.make(btn, message, Snackbar.LENGTH_LONG)
                 .setAction(action, View.OnClickListener(listener))
                 .setActionTextColor(resources.getColor(R.color.colorAccent))
                 .show()
@@ -334,55 +408,66 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         supportActionBar?.title = title
     }
 
-    override fun getTools(stubIds: Array<Int>): ArrayList<ViewStub> {
+    fun resetResultState() {
+        loader!!.show()
+        loader!!.hideAbort()
+        loader!!.setLoadMessage("Resetting result, please wait...")
+        val td = Thread(Runnable {
+            val editor = ResultEditor(this)
 
-        val views = ArrayList<ViewStub>()
-        stubIds.mapTo(views) { appBar.findViewById(it) }
+            val file = FileHandler.getResultFile(this)
 
-        return views
-    }
+            val worked = editor.addTemplate(FileInputStream(file), true, false)
 
-    companion object {
+            if (worked) {
 
-        fun setDrawableSelector(context: Context, normal: Int, selected: Int): Drawable{
+                runOnUiThread {
+                    loader!!.dismiss()
+                    refreshFragment(0, 0)
+                    refreshFragment(1, 0)
 
-            val stateNormal = ContextCompat.getDrawable(context, normal)
-
-            val statePressed = ContextCompat.getDrawable(context, selected)
-
-
-            val stateNormalBitmap = Bitmap.createBitmap(
-                    stateNormal!!.intrinsicWidth,
-                    stateNormal.intrinsicHeight, Bitmap.Config.ARGB_8888)
-            val canvas1 = Canvas(stateNormalBitmap)
-            stateNormal.setBounds(0, 0, canvas1.width, canvas1.height)
-            stateNormal.draw(canvas1)
-
-
-            // Setting alpha directly just didn't work, so we draw a new bitmap!
-            val disabledBitmap = Bitmap.createBitmap(
-                    stateNormal.intrinsicWidth,
-                    stateNormal.intrinsicHeight, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(disabledBitmap)
-
-            val paint = Paint()
-            paint.alpha = 126
-            canvas.drawBitmap(stateNormalBitmap, 0f, 0f, paint)
-
-            val stateNormalDrawable = BitmapDrawable(context.resources, disabledBitmap)
-
-
-            val drawable = StateListDrawable()
-
-            drawable.addState(intArrayOf(android.R.attr.state_selected),
-                    statePressed)
-            drawable.addState(intArrayOf(android.R.attr.state_enabled),
-                    stateNormalDrawable)
-
-            return drawable
-        }
+                    Toast.makeText(this, "Reset Success", Toast.LENGTH_SHORT).show()
+                }
+            } else
+                runOnUiThread {
+                    loader!!.dismiss()
+                    Toast.makeText(this, "Sorry unable to reset result", Toast.LENGTH_SHORT).show()
+                }
+        })
+        td.start()
 
     }
+
+    fun clearResult() {
+
+        val td = Thread(Runnable {
+
+            ResultEditor(this).saveResultState()
+
+            for (i in 1..9) {
+                for (j in 1..3) {
+
+                    val s = i * 1000 + j * 100
+                    if (Semester.courseCount(this, s) != 0) {
+                        val helper = ResultDataBase(this, s)
+
+                        Semester.decreaseCount(this, s, Semester.courseCount(this, s))
+                        helper.onUpgrade(helper.writableDatabase, 1, 1)
+
+                    }
+                }
+            }
+
+            runOnUiThread {
+                refreshFragment(0, 0)
+                refreshFragment(1, 0)
+            }
+        })
+
+        td.start()
+
+    }
+
 
 
 }

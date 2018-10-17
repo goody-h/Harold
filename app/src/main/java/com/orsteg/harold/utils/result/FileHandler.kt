@@ -2,7 +2,6 @@ package com.orsteg.harold.utils.result
 
 import android.content.Context
 import android.os.Environment
-import android.text.Html
 import android.util.Xml
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.orsteg.harold.database.ResultDataBase
@@ -192,6 +191,7 @@ class FileHandler {
     private fun save(context: Context, isTemplate: Boolean, file: File): JSONObject {
 
         val result = JSONObject()
+        result.put("success", false)
 
         val dataBuilder = StringBuilder("${tab(2)}{\n${tab(3)}\"courses\": [\n")
         var started = false
@@ -246,6 +246,7 @@ class FileHandler {
             outputStream = FileOutputStream(file)
             outputStream.write(fileData.toByteArray())
             outputStream.close()
+            result.put("success", true)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -275,9 +276,9 @@ class FileHandler {
         private val RESULT_HEAD = "${tab(2)}THIS IS A PERSONAL RESULT FILE (.res.txt)"
         private val FOOT_TEXT = "${tab(2)}${FirebaseRemoteConfig.getInstance().getString("contact_info").replace("||", "\n${tab(2)}")}"
 
-        private val VERSION = "1.1"
+        private val VERSION = "1.11"
 
-        val EXTERNAL_DIR: File
+        private val EXTERNAL_DIR: File
             get() {
                 val f = File(Environment.getExternalStorageDirectory(), "Harold Files/")
                 if (!f.exists()) f.mkdirs()

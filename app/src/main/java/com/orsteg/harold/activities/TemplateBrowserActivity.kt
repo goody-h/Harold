@@ -7,18 +7,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
-import android.support.v4.content.FileProvider
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.*
 import android.widget.*
 import com.google.android.gms.ads.AdRequest
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.orsteg.harold.R
 import com.orsteg.harold.dialogs.LoaderDialog
@@ -93,9 +86,12 @@ class TemplateBrowserActivity : AppCompatActivity() {
             startActivityForResult(openIntent, 45)
         }
 
-        if (iAction == TemplateViewerActivity.ACTION_UPLOAD) {
-            findViewById<View>(R.id.active).visibility = View.VISIBLE
-            findViewById<View>(R.id.active).setOnClickListener { getCurrentTemplate() }
+        findViewById<View>(R.id.active).setOnClickListener {
+            getCurrentTemplate(TemplateViewerActivity.ACTION_UPLOAD)
+        }
+
+        findViewById<View>(R.id.save).setOnClickListener {
+            getCurrentTemplate(TemplateViewerActivity.ACTION_SAVE)
         }
 
     }
@@ -250,7 +246,7 @@ class TemplateBrowserActivity : AppCompatActivity() {
 
         listView?.emptyView = findViewById(R.id.empty)
 
-        listView?.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
+        listView?.onItemClickListener = AdapterView.OnItemClickListener { adapterView, _, i, _ ->
             if (!isInMultiSelect) {
                 val uri = Uri.fromFile((adapterView.adapter as ListAdapter).getItem(i))
                 val it = Intent(adapterView.context, TemplateViewerActivity::class.java)
@@ -269,7 +265,7 @@ class TemplateBrowserActivity : AppCompatActivity() {
             }
         }
 
-        listView?.onItemLongClickListener = AdapterView.OnItemLongClickListener { adapterView, view, i, l ->
+        listView?.onItemLongClickListener = AdapterView.OnItemLongClickListener { _, _, i, _ ->
             startMultiSelect(i)
 
             true
@@ -354,7 +350,7 @@ class TemplateBrowserActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getCurrentTemplate() {
+    private fun getCurrentTemplate(action: String) {
 
         val td = Thread(Runnable {
             val handler = FileHandler()
@@ -364,7 +360,7 @@ class TemplateBrowserActivity : AppCompatActivity() {
 
             val i = Intent(c, TemplateViewerActivity::class.java)
             i.data = Uri.fromFile(file)
-            i.action = TemplateViewerActivity.ACTION_UPLOAD
+            i.action = action
             i.putExtra(TemplateViewerActivity.EXTRA_TEMPORARY, true)
 
             startActivity(i)
