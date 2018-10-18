@@ -1,12 +1,10 @@
-# Harold - Timetable & (CGPA GPA) Calculator
-Feature rich result manager with a semester aware timetable
+# Harold - CGPA & GPA Calculator
+Feature rich and simple result manager for students
 
 ## Introduction
 Easily calculate your GPA and CGPA with this result manager. It works for any university or college and can be customised to meet their grading system.
 
-Tired of writing course lists, get a course list template file from a friend who has written or go online and download available course lists on the app.The course list is available for use in both the timetable and result manager, so write once use twice.
-
-The inbuilt timetable is set to work with the the course list for a particular semester specified by the user. Reminders are scheduled regularly so you wont miss out on important events.
+Tired of writing course lists, get a course list template file from a friend who has written or go online and download available course lists on the app.
 
 ## Users
 The app is primarily a utility and educational resource intended for use by students in any higher institution of learning.
@@ -17,7 +15,6 @@ The app is primarily a utility and educational resource intended for use by stud
 - Downloadable course lists
 - Backup and restore of data
 - Support for decimal credit units
-- Scheduled event reminder
 
 ## Releases
 Releases are regularly uploaded to [Google play store](https://play.google.com/store/apps/details?id=com.orsteg.harold) in both production and beta stages. Support by downloading the latest version of the application and possibly dropping a review. You could also opt in for the beta testing program to get early access on future changes to be implemented.
@@ -36,6 +33,11 @@ Releases are regularly uploaded to [Google play store](https://play.google.com/s
 - Added terms and conditions
 - Bug fixes
 - Increased device range
+
+**V2.0.0**
+- New interface
+- Bug fixes
+- Simplified usage
 
 ## Contributing
 This project is open to contributions. Areas of focus should include:

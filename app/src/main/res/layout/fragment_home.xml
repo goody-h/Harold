@@ -70,7 +70,7 @@
                 android:textColor="@android:color/background_light"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cgpa_display" />
+                />
 
             <Button
                 android:id="@+id/grading"
@@ -79,7 +79,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/result"
                 android:layout_marginBottom="20dp"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="40dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/back_white"
                 android:drawableRight="@drawable/ic_settings_yellow_24dp"
@@ -96,7 +96,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/grading"
                 android:layout_marginBottom="5dp"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="40dp"
                 android:background="@drawable/back_white"
                 android:drawableRight="@drawable/ic_format_paint_yellow_24dp"
                 android:text="COURSE TEMPLATE MANAGER"

@@ -408,7 +408,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
         supportActionBar?.title = title
     }
 
-    fun resetResultState() {
+    private fun resetResultState() {
         loader!!.show()
         loader!!.hideAbort()
         loader!!.setLoadMessage("Resetting result, please wait...")
@@ -417,7 +417,11 @@ class MainActivity : AppCompatActivity(), BaseFragment.OnFragmentInteractionList
 
             val file = FileHandler.getResultFile(this)
 
-            val worked = editor.addTemplate(FileInputStream(file), true, false)
+            val worked = try {
+                editor.addTemplate(FileInputStream(file), true, false)
+            } catch (e: Exception) {
+                false
+            }
 
             if (worked) {
 

@@ -1,6 +1,7 @@
 package com.orsteg.harold.utils.app
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.transition.*
@@ -74,15 +75,17 @@ class FragmentManager(context: Context, private val parent: View, private var na
             if (frag.isHidden || new) {
 
                 val transaction = mFragmentManager.beginTransaction()
-                pFrag?.setSharedElements(transaction)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) pFrag?.setSharedElements(transaction)
 
                 if (new) {
 
                     val tag = mGroups[mCurrentGroup].fragTag
 
-                    frag.sharedElementEnterTransition = DetailsTransition()
-                    frag.enterTransition = Fade()
-                    frag.exitTransition = Fade()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        frag.sharedElementEnterTransition = DetailsTransition()
+                        frag.enterTransition = Fade()
+                        frag.exitTransition = Fade()
+                    }
 
                     if (pFrag != null) {
 

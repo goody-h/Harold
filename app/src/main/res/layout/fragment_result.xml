@@ -128,7 +128,7 @@
             android:layout_alignParentRight="true"
             android:text="0.00"
             android:textColor="@android:color/background_light"
-            android:textSize="40sp" />
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/cgpa_text"
