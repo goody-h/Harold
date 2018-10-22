@@ -1,5 +1,4 @@
 /* Harold firebase cloud functions for checking database state and changes */
-
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
