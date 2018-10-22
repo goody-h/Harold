@@ -1,24 +1,19 @@
+/* Harold firebase cloud functions for checking database state and changes */
+
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-exports.helloWorld = functions.https.onRequest((request, response) => {
-    response.send("Hello from Firebase!");
-});
-
-exports.templateChange = functions.database.ref('/CourseTemplates/{id}').onWrite(event => {
-    const template = (event.data.val()) ? event.data.val() : event.data.previous.val();
-    const pTemplate = event.data.previous.val();
+exports.templateChange = functions.database.ref('/CourseTemplates/{id}').onWrite((change, context) => {
+    const template = (change.after.val()) ? change.after.val() : change.before.val();
+    const pTemplate = change.before.val();
     const owner = template.ownerId;
     const iName = template.edKey.replace(/%&[\s\S]*/, '');
     const dName = template.edKey.replace(/[\s\S]*%&/, '');
     const inst = iName.replace(/\s+/g, '_');
     const dept = dName.replace(/\s+/g, '_');
 
-    if (event.data.previous.val() && event.data.current.val()) {
+    if (change.before.val() && change.after.val()) {
         return console.log('This is an update');
     }
 
@@ -78,11 +73,11 @@ exports.templateChange = functions.database.ref('/CourseTemplates/{id}').onWrite
 });
 
 
-exports.userNameChange = functions.database.ref('/Users/{id}/userName').onWrite(event => {
-    const userId = event.params.id;
-    const userName = event.data.val();
+exports.userNameChange = functions.database.ref('/Users/{id}/userName').onWrite((change, context) => {
+    const userId = context.params.id;
+    const userName = change.after.val();
 
-    if (!event.data.previous.val()) {
+    if (!change.before.val()) {
         return console.log('new userName');
     }
 
@@ -99,10 +94,10 @@ exports.userNameChange = functions.database.ref('/Users/{id}/userName').onWrite(
 
 });
 
-exports.edKeyChanged = functions.database.ref('/Users/{id}').onWrite(event => {
-    const user = event.data.val();
-    const userId = event.params.id;
-    const pUser = event.data.previous.val();
+exports.edKeyChanged = functions.database.ref('/Users/{id}').onWrite((change, context) => {
+    const user = change.after.val();
+    const userId = context.params.id;
+    const pUser = change.before.val();
 
     if (!pUser) {
         return console.log('new user');
@@ -190,8 +185,4 @@ exports.edKeyChanged = functions.database.ref('/Users/{id}').onWrite(event => {
             });
         });
     });
-});
-
-exports.onRequest = functions.database.ref('/Requests/{id}').onWrite(event => {
-
 });
