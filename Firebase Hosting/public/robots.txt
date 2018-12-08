@@ -1,4 +1,4 @@
 User-agent: *
-Disallow: /store
+Disallow:
 
 Sitemap: http://harold.apps.orsteg.com/sitemap.xml
