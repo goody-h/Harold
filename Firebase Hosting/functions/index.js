@@ -11,6 +11,7 @@ exports.templateChange = functions.database.ref('/CourseTemplates/{id}').onWrite
     const dName = template.edKey.replace(/[\s\S]*%&/, '');
     const inst = iName.replace(/\s+/g, '_');
     const dept = dName.replace(/\s+/g, '_');
+    const templateId = context.params.id;
 
     if (change.before.val() && change.after.val()) {
         return console.log('This is an update');
@@ -63,7 +64,28 @@ exports.templateChange = functions.database.ref('/CourseTemplates/{id}').onWrite
                         }
                     }
                     return data;
-                }).then(() => console.log("Template updated"));
+                }).then(() => {
+                    if (!pTemplate) {
+                        const filePath = `CourseTemplates/${templateId}tmp.txt`;
+                        const bucket = admin.storage().bucket();                                                                                                                                                            
+                        const file = bucket.file(filePath);
+
+                        return file.getMetadata().then((result) => {
+                            const meta = result[0];
+
+                            if (meta && meta.metadata) {
+                                console.log("metadata gotten", meta.contentType);
+
+                                meta.metadata.ownerId = owner;
+
+                                return file.setMetadata(meta).then(() => {
+                                    console.log("File ownership set for", filePath);
+                                    console.log("Template updated");
+                                });
+                            }
+                        });
+                    }
+                });
             });
 
         });
