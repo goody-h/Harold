@@ -11,7 +11,7 @@ The app is primarily a utility and educational resource intended for use by stud
 
 ## Features
 - Unlimited courses per semester
-- Allows custom grading grading system
+- Allows custom grading system
 - Downloadable course lists
 - Backup and restore of data
 - Support for decimal credit units
